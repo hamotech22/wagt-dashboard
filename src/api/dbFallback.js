@@ -83,6 +83,29 @@ function readFallback(database, config) {
   };
 }
 
+axios.interceptors.request.use((config) => {
+  if (import.meta.env.PROD && config.method?.toLowerCase() === "get") {
+    const url = new URL(config.url, config.baseURL || window.location.origin);
+    if (["localhost", "127.0.0.1"].includes(url.hostname) && url.port === "3000") {
+      config.adapter = async (adapterConfig) => {
+        const database = await loadDatabase();
+        const response = readFallback(database, adapterConfig);
+        if (!response) {
+          throw new Error(`No public/db.json fallback data is available for ${adapterConfig.url}`);
+        }
+
+        if (!warnedAboutFallback) {
+          console.warn("Using read-only data from public/db.json; server-side changes are unavailable.");
+          warnedAboutFallback = true;
+        }
+        return response;
+      };
+    }
+  }
+
+  return config;
+});
+
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {

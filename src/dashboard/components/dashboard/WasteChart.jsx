@@ -28,7 +28,7 @@ export default function WasteChart() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
+    <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
       {/* العنوان */}
       <div className="mb-4 flex items-center justify-between">
         <div>

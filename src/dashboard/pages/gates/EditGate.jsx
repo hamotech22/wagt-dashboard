@@ -6,20 +6,20 @@ import GateForm from "./GateForm";
 
 const API_URL = "http://localhost:3000";
 
-const fetchGate = (id) =>
-  axios
-    .get(`${API_URL}/gates/${id}`)
-    .then((response) => response.data)
-    .catch(() => null);
-const updateGate = (id, payload) => axios.put(`${API_URL}/gates/${id}`, { ...payload, id }).then((response) => response.data);
-
 export default function EditGate() {
   const { id } = useParams();
   const [gate, setGate] = useState(null);
 
+  // جلب بيانات البوابة
   useEffect(() => {
-    fetchGate(id).then(setGate);
+    axios
+      .get(`${API_URL}/gates/${id}`)
+      .then((res) => setGate(res.data))
+      .catch(() => {});
   }, [id]);
+
+  // حفظ التعديلات
+  const handleUpdate = (data) => axios.put(`${API_URL}/gates/${id}`, { ...data, id });
 
   if (!gate) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
 
@@ -30,8 +30,10 @@ export default function EditGate() {
         <Breadcrumb.Link to="/dashboard/gates">البوابات</Breadcrumb.Link>
         <Breadcrumb.Current>تعديل البوابة</Breadcrumb.Current>
       </Breadcrumb>
+
       <h1 className="text-2xl font-bold text-gray-800">تعديل البوابة</h1>
-      <GateForm initialData={gate} onSubmit={(d) => updateGate(id, d)} submitLabel="حفظ التعديلات" />
+
+      <GateForm initialData={gate} onSubmit={handleUpdate} submitLabel="حفظ التعديلات" />
     </div>
   );
 }

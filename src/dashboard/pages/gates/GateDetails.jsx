@@ -6,20 +6,6 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
-const fetchGate = (id) =>
-  axios
-    .get(`${API_URL}/gates/${id}`)
-    .then((response) => response.data)
-    .catch(() => null);
-const fetchGateLookups = () =>
-  axios
-    .all([axios.get(`${API_URL}/sites`), axios.get(`${API_URL}/devices`)])
-    .then(([sitesRes, devicesRes]) => ({
-      sites: sitesRes?.data ?? [],
-      devices: devicesRes?.data ?? [],
-    }))
-    .catch(() => ({ sites: [], devices: [] }));
-
 function Item({ label, children }) {
   return (
     <div>
@@ -32,41 +18,36 @@ function Item({ label, children }) {
 export default function GateDetails() {
   const { id } = useParams();
   const [gate, setGate] = useState(null);
-  const [sites, setSites] = useState([]);
+  const [site, setSite] = useState(null);
+  const [devices, setDevices] = useState([]);
 
+  // جلب بيانات البوابة، ثم الموقع والأجهزة المرتبطة بها
   useEffect(() => {
-    Promise.all([fetchGate(id), fetchGateLookups()]).then(([g, l]) => {
-      if (!g) {
-        setGate(null);
-        setSites(l.sites);
-        return;
-      }
-
-      const name = g.nameAr ?? g.name ?? "";
-      setGate({
-        ...g,
-        nameAr: name,
-        status: g.status === "online" ? "active" : g.status === "offline" ? "inactive" : g.status,
-        connectionStatus:
-          g.connectionStatus ?? (g.status === "online" || g.status === "offline" ? g.status : "offline"),
-        integration: g.integration ?? {},
-        devices: Array.isArray(g.devices) ? g.devices : l.devices.filter((device) => device.gate === name),
-      });
-      setSites(l.sites);
-    });
+    axios
+      .get(`${API_URL}/gates/${id}`)
+      .then(({ data }) => {
+        setGate(data);
+        return Promise.all([axios.get(`${API_URL}/sites/${data.siteId}`), axios.get(`${API_URL}/devices?gateId=${data.id}`)]);
+      })
+      .then(([siteRes, devicesRes]) => {
+        setSite(siteRes.data);
+        setDevices(devicesRes.data);
+      })
+      .catch(() => {});
   }, [id]);
 
   if (!gate) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
 
-  const site = sites.find((s) => String(s.id) === String(gate.siteId))?.name;
+  const integration = gate.integration || {};
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
       <Breadcrumb>
         <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
         <Breadcrumb.Link to="/dashboard/gates">البوابات</Breadcrumb.Link>
-        <Breadcrumb.Current>{gate.nameAr || gate.name || "تفاصيل البوابة"}</Breadcrumb.Current>
+        <Breadcrumb.Current>{gate.nameAr || "تفاصيل البوابة"}</Breadcrumb.Current>
       </Breadcrumb>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-800">{gate.nameAr || "بوابة"}</h1>
@@ -87,7 +68,7 @@ export default function GateDetails() {
           <Item label="الحالة">
             <StatusBadge status={gate.status} />
           </Item>
-          <Item label="الموقع">{site}</Item>
+          <Item label="الموقع">{site?.name}</Item>
           <Item label="النوع">{TYPE_LABEL[gate.type]}</Item>
           <Item label="الاتجاه">{DIRECTION_LABEL[gate.direction]}</Item>
           <Item label="آخر اتصال">{formatDate(gate.lastConnection)}</Item>
@@ -95,39 +76,35 @@ export default function GateDetails() {
 
         <div className="bg-white rounded-xl shadow-sm p-5 space-y-3">
           <h3 className="font-semibold text-gray-800">إعدادات التكامل</h3>
-          <Item label="الإرسال التلقائي">
-            {gate.integration.autoSubmit == null ? "-" : gate.integration.autoSubmit ? "مفعّل" : "متوقف"}
-          </Item>
-          <Item label="محاولات إعادة الإرسال">{gate.integration.maxRetries ?? "-"}</Item>
+          <Item label="الإرسال التلقائي">{integration.autoSubmit == null ? "-" : integration.autoSubmit ? "مفعّل" : "متوقف"}</Item>
+          <Item label="محاولات إعادة الإرسال">{integration.maxRetries ?? "-"}</Item>
         </div>
       </div>
 
       {/* الأجهزة */}
       <div className="bg-white rounded-xl shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">الأجهزة المرتبطة ({gate.devices.length})</h3>
+          <h3 className="font-semibold text-gray-800">الأجهزة المرتبطة ({devices.length})</h3>
           <Link to="/dashboard/devices/add" className="text-sm text-blue-600 hover:underline">
             + إضافة جهاز
           </Link>
         </div>
 
-        {gate.devices.length === 0 ? (
+        {devices.length === 0 ? (
           <p className="text-sm text-gray-400">لا توجد أجهزة مرتبطة بهذه البوابة.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {gate.devices.map((d) => (
+            {devices.map((d) => (
               <Link
                 key={d.id}
                 to={`/dashboard/devices/${d.id}`}
                 className="border rounded-lg p-3 hover:bg-gray-50 flex items-center justify-between"
               >
                 <div>
-                  <div className="text-sm font-medium text-gray-800">{d.name}</div>
+                  <div className="text-sm font-medium text-gray-800">{d.nameAr}</div>
                   <div className="text-xs text-gray-400">{DEVICE_LABEL[d.type] || d.type}</div>
                 </div>
-                <ConnectionBadge
-                  status={d.status ?? (d.connection === "متصل" ? "online" : "offline")}
-                />
+                <ConnectionBadge status={d.connectionStatus} />
               </Link>
             ))}
           </div>

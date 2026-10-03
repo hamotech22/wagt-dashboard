@@ -364,7 +364,7 @@ export default function Sidebar({ open, handleDrawerClose }) {
                 //  - clicking the ROW (text / arrow) only expands/collapses the group
                 //  - clicking the ICON only navigates to the list page
                 <ListItemButton
-                  onClick={() => handleToggle(item.path)}
+                  onClick={() => (open ? handleToggle(item.path) : navigate(item.path))}
                   sx={{
                     ...itemSx(open),
                     color: isActiveGroup ? palette.active : palette.text,

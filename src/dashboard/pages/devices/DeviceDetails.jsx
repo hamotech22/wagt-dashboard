@@ -6,20 +6,6 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
-const fetchDevice = (id) =>
-  axios
-    .get(`${API_URL}/devices/${id}`)
-    .then((response) => response.data)
-    .catch(() => null);
-const fetchDeviceLookups = () =>
-  axios
-    .all([axios.get(`${API_URL}/gates`), axios.get(`${API_URL}/deviceTypes`)])
-    .then(([gatesRes, typesRes]) => ({
-      gates: gatesRes?.data ?? [],
-      types: typesRes?.data ?? [],
-    }))
-    .catch(() => ({ gates: [], types: [] }));
-
 function Item({ label, children }) {
   return (
     <div>
@@ -32,18 +18,20 @@ function Item({ label, children }) {
 export default function DeviceDetails() {
   const { id } = useParams();
   const [device, setDevice] = useState(null);
-  const [gates, setGates] = useState([]);
+  const [gate, setGate] = useState(null);
 
   useEffect(() => {
-    Promise.all([fetchDevice(id), fetchDeviceLookups()]).then(([d, l]) => {
-      setDevice(d);
-      setGates(l.gates);
-    });
+    axios
+      .get(`${API_URL}/devices/${id}`)
+      .then(({ data }) => {
+        setDevice(data);
+        return axios.get(`${API_URL}/gates/${data.gateId}`);
+      })
+      .then(({ data }) => setGate(data))
+      .catch(() => {});
   }, [id]);
 
   if (!device) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
-
-  const gate = gates.find((g) => g.id === device.gateId);
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -52,6 +40,7 @@ export default function DeviceDetails() {
         <Breadcrumb.Link to="/dashboard/devices">الأجهزة</Breadcrumb.Link>
         <Breadcrumb.Current>{device.nameAr || "تفاصيل الجهاز"}</Breadcrumb.Current>
       </Breadcrumb>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{TYPE_ICON[device.type]}</span>

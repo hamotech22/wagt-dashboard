@@ -1,28 +1,13 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:3000";
 
-const fetchDeviceLookups = () =>
-  axios
-    .all([axios.get(`${API_URL}/gates`), axios.get(`${API_URL}/deviceTypes`)])
-    .then(([gatesRes, typesRes]) => ({
-      gates: gatesRes?.data ?? [],
-      types: typesRes?.data?.length
-        ? typesRes.data
-        : [
-            { value: "anpr", label: "ANPR" },
-            { value: "weighbridge", label: "ميزان" },
-          ],
-    }))
-    .catch(() => ({
-      gates: [],
-      types: [
-        { value: "anpr", label: "ANPR" },
-        { value: "weighbridge", label: "ميزان" },
-      ],
-    }));
+const DEFAULT_TYPES = [
+  { value: "anpr", label: "ANPR" },
+  { value: "weighbridge", label: "ميزان" },
+];
 
 const EMPTY = {
   nameAr: "",
@@ -51,50 +36,49 @@ function Field({ label, error, hint, children }) {
 
 export default function DeviceForm({ initialData, onSubmit, submitLabel = "حفظ" }) {
   const navigate = useNavigate();
-  const [form, setForm] = useState(EMPTY);
-  const [lookups, setLookups] = useState({ gates: [], types: [] });
+  const formRef = useRef(null);
+  const [lookups, setLookups] = useState(null);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchDeviceLookups().then(setLookups);
+    Promise.all([axios.get(`${API_URL}/gates`), axios.get(`${API_URL}/deviceTypes`)])
+      .then(([gates, types]) => setLookups({ gates: gates.data, types: types.data.length ? types.data : DEFAULT_TYPES }))
+      .catch(() => setLookups({ gates: [], types: DEFAULT_TYPES }));
   }, []);
 
-  useEffect(() => {
-    if (initialData) setForm({ ...EMPTY, ...initialData });
-  }, [initialData]);
+  if (!lookups) return null;
 
-  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-
-  const validate = () => {
-    const e = {};
-    if (!form.nameAr.trim()) e.nameAr = "اسم الجهاز مطلوب";
-    if (!form.gateId) e.gateId = "اختر البوابة";
-    if (!form.connectionId.trim()) e.connectionId = "معرّف الاتصال مطلوب";
-    if (form.ip && !IP_REGEX.test(form.ip)) e.ip = "صيغة IP غير صحيحة";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  const d = { ...EMPTY, ...initialData };
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
-    if (!validate()) return;
+    const data = Object.fromEntries(new FormData(formRef.current));
+
+    const e = {};
+    if (!data.nameAr.trim()) e.nameAr = "اسم الجهاز مطلوب";
+    if (!data.gateId) e.gateId = "اختر البوابة";
+    if (!data.connectionId.trim()) e.connectionId = "معرّف الاتصال مطلوب";
+    if (data.ip && !IP_REGEX.test(data.ip)) e.ip = "صيغة IP غير صحيحة";
+    setErrors(e);
+    if (Object.keys(e).length) return;
+
     setSaving(true);
-    await onSubmit({ ...form, gateId: Number(form.gateId) });
+    await onSubmit({ ...initialData, ...data, gateId: Number(data.gateId) });
     setSaving(false);
     navigate("/dashboard/devices");
   };
 
   return (
-    <form onSubmit={handleSubmit} dir="rtl" className="space-y-6">
+    <form key={initialData?.id ?? "new"} ref={formRef} onSubmit={handleSubmit} dir="rtl" className="space-y-6">
       <section className="bg-white rounded-xl shadow-sm p-5 space-y-4">
         <h2 className="font-semibold text-gray-800">بيانات الجهاز</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="اسم الجهاز *" error={errors.nameAr}>
-            <input className={inputCls} value={form.nameAr} onChange={(e) => set("nameAr", e.target.value)} />
+            <input name="nameAr" defaultValue={d.nameAr} className={inputCls} />
           </Field>
           <Field label="نوع الجهاز *">
-            <select className={inputCls} value={form.type} onChange={(e) => set("type", e.target.value)}>
+            <select name="type" defaultValue={d.type} className={inputCls}>
               {lookups.types.map((t) => (
                 <option key={t.value} value={t.value}>
                   {t.label}
@@ -103,7 +87,7 @@ export default function DeviceForm({ initialData, onSubmit, submitLabel = "حف�
             </select>
           </Field>
           <Field label="البوابة *" error={errors.gateId}>
-            <select className={inputCls} value={form.gateId} onChange={(e) => set("gateId", e.target.value)}>
+            <select name="gateId" defaultValue={d.gateId} className={inputCls}>
               <option value="">اختر...</option>
               {lookups.gates.map((g) => (
                 <option key={g.id} value={g.id}>
@@ -113,7 +97,7 @@ export default function DeviceForm({ initialData, onSubmit, submitLabel = "حف�
             </select>
           </Field>
           <Field label="الحالة">
-            <select className={inputCls} value={form.status} onChange={(e) => set("status", e.target.value)}>
+            <select name="status" defaultValue={d.status} className={inputCls}>
               <option value="active">نشط</option>
               <option value="maintenance">صيانة</option>
               <option value="inactive">غير نشط</option>
@@ -130,16 +114,16 @@ export default function DeviceForm({ initialData, onSubmit, submitLabel = "حف�
             error={errors.connectionId}
             hint="المعرّف الذي يرسله الجهاز مع بياناته، مثل ANPR-NJR-001"
           >
-            <input dir="ltr" className={inputCls} value={form.connectionId} onChange={(e) => set("connectionId", e.target.value)} />
+            <input name="connectionId" defaultValue={d.connectionId} dir="ltr" className={inputCls} />
           </Field>
           <Field label="عنوان IP (عند الحاجة)" error={errors.ip}>
-            <input dir="ltr" placeholder="192.168.1.10" className={inputCls} value={form.ip} onChange={(e) => set("ip", e.target.value)} />
+            <input name="ip" defaultValue={d.ip} dir="ltr" placeholder="192.168.1.10" className={inputCls} />
           </Field>
           <Field label="إصدار Firmware (عند توفره)">
-            <input dir="ltr" className={inputCls} value={form.firmware} onChange={(e) => set("firmware", e.target.value)} />
+            <input name="firmware" defaultValue={d.firmware} dir="ltr" className={inputCls} />
           </Field>
           <Field label="تاريخ التركيب">
-            <input type="date" className={inputCls} value={form.installDate} onChange={(e) => set("installDate", e.target.value)} />
+            <input name="installDate" defaultValue={d.installDate} type="date" className={inputCls} />
           </Field>
         </div>
       </section>

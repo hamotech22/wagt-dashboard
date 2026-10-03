@@ -18,7 +18,7 @@ export default function ContractorsChart() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
+    <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
       {/* العنوان */}
       <div className="mb-5">
         <h2 className="text-base font-bold text-slate-800">الوزن حسب المقاولين</h2>

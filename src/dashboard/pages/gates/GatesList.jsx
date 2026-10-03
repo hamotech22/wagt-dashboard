@@ -1,42 +1,13 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import { StatusBadge, ConnectionBadge, DIRECTION_LABEL, TYPE_LABEL, formatDate } from "./GateBadges";
 
 const API_URL = "http://localhost:3000";
 
-const fetchGates = () =>
-  axios
-    .get(`${API_URL}/gates`)
-    .then((response) => (Array.isArray(response.data) ? response.data : []))
-    .catch(() => []);
-const fetchGateLookups = () =>
-  axios
-    .all([axios.get(`${API_URL}/sites`), axios.get(`${API_URL}/devices`)])
-    .then(([sitesRes, devicesRes]) => ({
-      sites: sitesRes?.data ?? [],
-      devices: devicesRes?.data ?? [],
-    }))
-    .catch(() => ({ sites: [], devices: [] }));
-const fetchGateData = () =>
-  Promise.all([fetchGates(), fetchGateLookups()]).then(([gates, lookups]) => ({
-    sites: lookups.sites,
-    gates: gates.map((gate) => {
-      const name = gate.nameAr ?? gate.name ?? "";
-      const connectionStatus =
-        gate.connectionStatus ?? (gate.status === "online" || gate.status === "offline" ? gate.status : "offline");
-
-      return {
-        ...gate,
-        nameAr: name,
-        connectionStatus,
-        status: gate.status === "online" ? "active" : gate.status === "offline" ? "inactive" : (gate.status ?? "inactive"),
-        devices: Array.isArray(gate.devices) ? gate.devices : lookups.devices.filter((device) => device.gate === name),
-      };
-    }),
-  }));
-const deleteGate = (id) => axios.delete(`${API_URL}/gates/${id}`).then((response) => response.data);
+const selectCls = "border rounded-lg px-3 py-2 text-sm";
+const actionBtnCls = "rounded-md border px-2.5 py-1";
 
 function StatCard({ label, value, color }) {
   return (
@@ -50,6 +21,7 @@ function StatCard({ label, value, color }) {
 export default function GatesList() {
   const [gates, setGates] = useState([]);
   const [sites, setSites] = useState([]);
+  const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -57,46 +29,48 @@ export default function GatesList() {
   const [status, setStatus] = useState("");
   const [connection, setConnection] = useState("");
 
-  const load = () =>
-    fetchGateData().then(({ gates: nextGates, sites: nextSites }) => {
-      setGates(nextGates);
-      setSites(nextSites);
-      setLoading(false);
-    });
+  // جلب البيانات من السيرفر
+  const loadData = () => {
+    setLoading(true);
+    Promise.all([axios.get(`${API_URL}/gates`), axios.get(`${API_URL}/sites`), axios.get(`${API_URL}/devices`)])
+      .then(([gatesRes, sitesRes, devicesRes]) => {
+        setGates(gatesRes.data);
+        setSites(sitesRes.data);
+        setDevices(devicesRes.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
-    fetchGateData().then(({ gates: nextGates, sites: nextSites }) => {
-      setGates(nextGates);
-      setSites(nextSites);
-      setLoading(false);
-    });
+    loadData();
   }, []);
 
-  const reload = () => {
-    setLoading(true);
-    return load();
-  };
-
-  const filtered = useMemo(
-    () =>
-      gates.filter(
-        (g) =>
-          (!search || g.nameAr.includes(search)) &&
-          (!siteId || String(g.siteId) === siteId) &&
-          (!status || g.status === status) &&
-          (!connection || g.connectionStatus === connection),
-      ),
-    [gates, search, siteId, status, connection],
-  );
-
-  const siteName = (id) => sites.find((s) => String(s.id) === String(id))?.name || "-";
-  const online = gates.filter((g) => g.connectionStatus === "online").length;
-
+  // حذف بوابة
   const handleDelete = async (id) => {
     if (!window.confirm("هل أنت متأكد من حذف هذه البوابة؟")) return;
-    await deleteGate(id);
-    reload();
+    await axios.delete(`${API_URL}/gates/${id}`);
+    loadData();
   };
+
+  // اسم الموقع من رقمه
+  const getSiteName = (id) => sites.find((s) => String(s.id) === String(id))?.name || "-";
+
+  // عدد الأجهزة المرتبطة ببوابة
+  const getDevicesCount = (id) => devices.filter((d) => String(d.gateId) === String(id)).length;
+
+  // الفلترة
+  const filtered = gates.filter(
+    (g) =>
+      (g.nameAr || "").includes(search) &&
+      (!siteId || String(g.siteId) === siteId) &&
+      (!status || g.status === status) &&
+      (!connection || g.connectionStatus === connection),
+  );
+
+  // الإحصائيات
+  const online = gates.filter((g) => g.connectionStatus === "online").length;
+  const maintenance = gates.filter((g) => g.status === "maintenance").length;
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -104,25 +78,26 @@ export default function GatesList() {
         <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
         <Breadcrumb.Current>البوابات</Breadcrumb.Current>
       </Breadcrumb>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">إدارة البوابات</h1>
           <p className="text-sm text-gray-500">البوابات الذكية وحالة اتصالها</p>
         </div>
-        <Link to="/dashboard/gates/add" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
+        <Link to="/dashboard/gates/add" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
           + إضافة بوابة
         </Link>
       </div>
 
-      {/* Stats */}
+      {/* الإحصائيات */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="إجمالي البوابات" value={gates.length} color="text-gray-800" />
         <StatCard label="متصلة" value={online} color="text-green-600" />
         <StatCard label="غير متصلة" value={gates.length - online} color="text-red-600" />
-        <StatCard label="تحت الصيانة" value={gates.filter((g) => g.status === "maintenance").length} color="text-yellow-600" />
+        <StatCard label="تحت الصيانة" value={maintenance} color="text-yellow-600" />
       </div>
 
-      {/* Filters */}
+      {/* الفلاتر */}
       <div className="bg-white rounded-xl shadow-sm p-4 grid grid-cols-1 md:grid-cols-4 gap-3">
         <input
           value={search}
@@ -130,7 +105,8 @@ export default function GatesList() {
           placeholder="بحث باسم البوابة..."
           className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <select value={siteId} onChange={(e) => setSiteId(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
+
+        <select value={siteId} onChange={(e) => setSiteId(e.target.value)} className={selectCls}>
           <option value="">كل المواقع</option>
           {sites.map((s) => (
             <option key={s.id} value={s.id}>
@@ -138,20 +114,22 @@ export default function GatesList() {
             </option>
           ))}
         </select>
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
+
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className={selectCls}>
           <option value="">كل الحالات</option>
           <option value="active">نشطة</option>
           <option value="maintenance">صيانة</option>
           <option value="inactive">غير نشطة</option>
         </select>
-        <select value={connection} onChange={(e) => setConnection(e.target.value)} className="border rounded-lg px-3 py-2 text-sm">
+
+        <select value={connection} onChange={(e) => setConnection(e.target.value)} className={selectCls}>
           <option value="">كل حالات الاتصال</option>
           <option value="online">متصلة</option>
           <option value="offline">غير متصلة</option>
         </select>
       </div>
 
-      {/* Table */}
+      {/* الجدول */}
       <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
         <table className="w-full text-sm text-right">
           <thead className="bg-gray-50 text-gray-600">
@@ -175,6 +153,7 @@ export default function GatesList() {
                 </td>
               </tr>
             )}
+
             {!loading && filtered.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-gray-400">
@@ -186,10 +165,10 @@ export default function GatesList() {
             {filtered.map((g) => (
               <tr key={g.id} className="border-t hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-800">{g.nameAr}</td>
-                <td className="p-3">{siteName(g.siteId)}</td>
+                <td className="p-3">{getSiteName(g.siteId)}</td>
                 <td className="p-3">{TYPE_LABEL[g.type] || "-"}</td>
                 <td className="p-3">{DIRECTION_LABEL[g.direction] || "-"}</td>
-                <td className="p-3">{g.devices.length}</td>
+                <td className="p-3">{getDevicesCount(g.id)}</td>
                 <td className="p-3">
                   <ConnectionBadge status={g.connectionStatus} />
                 </td>
@@ -198,14 +177,20 @@ export default function GatesList() {
                   <StatusBadge status={g.status} />
                 </td>
                 <td className="p-3">
-                  <div className="flex gap-3 text-xs">
-                    <Link to={`/dashboard/gates/${g.id}`} className="text-blue-600 hover:underline">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Link to={`/dashboard/gates/${g.id}`} className={`${actionBtnCls} border-gray-200 text-gray-700 hover:bg-gray-50`}>
                       عرض
                     </Link>
-                    <Link to={`/dashboard/gates/edit/${g.id}`} className="text-green-600 hover:underline">
+                    <Link
+                      to={`/dashboard/gates/edit/${g.id}`}
+                      className={`${actionBtnCls} border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100`}
+                    >
                       تعديل
                     </Link>
-                    <button onClick={() => handleDelete(g.id)} className="text-red-600 hover:underline">
+                    <button
+                      onClick={() => handleDelete(g.id)}
+                      className={`${actionBtnCls} border-red-200 bg-red-50 text-red-700 hover:bg-red-100`}
+                    >
                       حذف
                     </button>
                   </div>

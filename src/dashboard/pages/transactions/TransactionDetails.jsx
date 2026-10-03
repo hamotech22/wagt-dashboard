@@ -6,30 +6,7 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
-const fetchTransaction = (id) =>
-  axios
-    .get(`${API_URL}/transactions/${id}`)
-    .then((response) => response.data)
-    .catch(() => null);
-const fetchTransactionLookups = () =>
-  axios
-    .all([
-      axios.get(`${API_URL}/sites`),
-      axios.get(`${API_URL}/gates`),
-      axios.get(`${API_URL}/contractors`),
-      axios.get(`${API_URL}/projects`),
-      axios.get(`${API_URL}/wasteTypesRef`),
-    ])
-    .then(([sitesRes, gatesRes, contractorsRes, projectsRes, wasteRes]) => ({
-      sites: sitesRes?.data ?? [],
-      gates: gatesRes?.data ?? [],
-      contractors: contractorsRes?.data ?? [],
-      projects: projectsRes?.data ?? [],
-      wasteTypes: wasteRes?.data ?? [],
-    }))
-    .catch(() => ({ sites: [], gates: [], contractors: [], projects: [], wasteTypes: [] }));
-const cancelTransaction = (id, reason) =>
-  axios.patch(`${API_URL}/transactions/${id}`, { status: "cancelled", note: reason }).then((response) => response.data);
+const btnCls = "border px-4 py-2 rounded-lg text-sm hover:bg-gray-50";
 
 function Item({ label, children }) {
   return (
@@ -72,12 +49,15 @@ function Timeline({ tx }) {
     { label: "تسجيل الخروج", time: tx.exitAt, done: !!tx.exitAt },
     { label: "اكتمال العملية", time: tx.status === "completed" ? tx.exitAt : null, done: tx.status === "completed" },
   ];
+
   return (
     <ol className="space-y-4">
-      {steps.map((s, i) => (
-        <li key={i} className="flex items-start gap-3">
+      {steps.map((s) => (
+        <li key={s.label} className="flex items-start gap-3">
           <span
-            className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white ${s.done ? "bg-green-500" : "bg-gray-300"}`}
+            className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white ${
+              s.done ? "bg-green-500" : "bg-gray-300"
+            }`}
           >
             {s.done ? "✓" : ""}
           </span>
@@ -94,30 +74,51 @@ function Timeline({ tx }) {
 export default function TransactionDetails() {
   const { id } = useParams();
   const [tx, setTx] = useState(null);
-  const [lookups, setLookups] = useState({ sites: [], gates: [], contractors: [], projects: [], wasteTypes: [] });
+  const [sites, setSites] = useState([]);
+  const [gates, setGates] = useState([]);
+  const [contractors, setContractors] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [wasteTypes, setWasteTypes] = useState([]);
 
-  const load = () =>
-    Promise.all([fetchTransaction(id), fetchTransactionLookups()]).then(([t, l]) => {
-      setTx(t);
-      setLookups(l);
-    });
+  // جلب بيانات العملية والقوائم المرتبطة بها
+  const loadData = () => {
+    Promise.all([
+      axios.get(`${API_URL}/transactions/${id}`),
+      axios.get(`${API_URL}/sites`),
+      axios.get(`${API_URL}/gates`),
+      axios.get(`${API_URL}/contractors`),
+      axios.get(`${API_URL}/projects`),
+      axios.get(`${API_URL}/wasteTypesRef`),
+    ])
+      .then(([txRes, sitesRes, gatesRes, contractorsRes, projectsRes, wasteRes]) => {
+        setTx(txRes.data);
+        setSites(sitesRes.data);
+        setGates(gatesRes.data);
+        setContractors(contractorsRes.data);
+        setProjects(projectsRes.data);
+        setWasteTypes(wasteRes.data);
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadData();
   }, [id]);
 
-  if (!tx) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
-
-  const nameOf = (list, v, key = "id") => list.find((x) => String(x[key]) === String(v))?.name;
-
-  // ملاحظة: يفضّل حصر هذا الإجراء بصلاحية transactions.cancel
+  // إلغاء العملية (يفضّل حصرها بصلاحية transactions.cancel)
   const handleCancel = async () => {
     const reason = window.prompt("سبب إلغاء العملية (إلزامي):");
     if (!reason || !reason.trim()) return;
-    await cancelTransaction(tx.id, reason.trim());
-    load();
+    await axios.patch(`${API_URL}/transactions/${id}`, { status: "cancelled", note: reason.trim() });
+    loadData();
   };
+
+  // اسم عنصر من قائمة
+  const getName = (list, value, key = "id") => list.find((x) => String(x[key]) === String(value))?.name;
+
+  if (!tx) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
+
+  const showNote = tx.note && (tx.status === "rejected" || tx.status === "cancelled");
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -126,7 +127,8 @@ export default function TransactionDetails() {
         <Breadcrumb.Link to="/dashboard/transactions">المعاملات</Breadcrumb.Link>
         <Breadcrumb.Current>تفاصيل المعاملة</Breadcrumb.Current>
       </Breadcrumb>
-      {/* Header */}
+
+      {/* الرأس */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
           <PlateBadge number={tx.plateNumber} chars={tx.plateChars} size="lg" />
@@ -137,28 +139,35 @@ export default function TransactionDetails() {
             <StatusBadge status={tx.status} />
           </div>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex items-center gap-2">
           {tx.status === "inside" && (
-            <button onClick={handleCancel} className="border border-red-300 text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg text-sm">
+            <button
+              onClick={handleCancel}
+              className="border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2 rounded-lg text-sm"
+            >
               إلغاء العملية
             </button>
           )}
-          <Link to="/dashboard/transactions" className="border px-4 py-2 rounded-lg text-sm">
+          <Link to="/dashboard/transactions" className={btnCls}>
             رجوع
           </Link>
         </div>
       </div>
 
-      {tx.note && (tx.status === "rejected" || tx.status === "cancelled") && (
+      {/* سبب الرفض / الإلغاء */}
+      {showNote && (
         <div
-          className={`text-sm rounded-lg p-3 border ${tx.status === "rejected" ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-700"}`}
+          className={`text-sm rounded-lg p-3 border ${
+            tx.status === "rejected" ? "bg-red-50 border-red-200 text-red-800" : "bg-gray-50 border-gray-200 text-gray-700"
+          }`}
         >
           <b>{tx.status === "rejected" ? "سبب الرفض: " : "سبب الإلغاء: "}</b>
           {tx.note}
         </div>
       )}
 
-      {/* Weights */}
+      {/* الأوزان */}
       <div className="bg-white rounded-xl shadow-sm p-5">
         <h3 className="font-semibold text-gray-800 mb-4">الأوزان</h3>
         <div className="flex items-center divide-x divide-x-reverse divide-gray-200">
@@ -170,28 +179,28 @@ export default function TransactionDetails() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Info */}
+        {/* بيانات العملية */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-5 grid grid-cols-2 gap-5">
           <h3 className="col-span-2 font-semibold text-gray-800">بيانات العملية</h3>
-          <Item label="المقاول">{nameOf(lookups.contractors, tx.contractorId)}</Item>
-          <Item label="المشروع">{nameOf(lookups.projects, tx.projectId)}</Item>
-          <Item label="الموقع">{nameOf(lookups.sites, tx.siteId)}</Item>
-          <Item label="نوع النفايات">{nameOf(lookups.wasteTypes, tx.wasteTypeCode, "code")}</Item>
-          <Item label="بوابة الدخول">{nameOf(lookups.gates, tx.entryGateId)}</Item>
-          <Item label="بوابة الخروج">{nameOf(lookups.gates, tx.exitGateId)}</Item>
+          <Item label="المقاول">{getName(contractors, tx.contractorId)}</Item>
+          <Item label="المشروع">{getName(projects, tx.projectId)}</Item>
+          <Item label="الموقع">{getName(sites, tx.siteId)}</Item>
+          <Item label="نوع النفايات">{getName(wasteTypes, tx.wasteTypeCode, "code")}</Item>
+          <Item label="بوابة الدخول">{getName(gates, tx.entryGateId)}</Item>
+          <Item label="بوابة الخروج">{getName(gates, tx.exitGateId)}</Item>
           <Item label="اسم السائق">{tx.driverName}</Item>
           <Item label="وقت الدخول">{formatDate(tx.entryAt)}</Item>
           <Item label="وقت الخروج">{formatDate(tx.exitAt)}</Item>
         </div>
 
-        {/* Timeline */}
+        {/* مسار العملية */}
         <div className="bg-white rounded-xl shadow-sm p-5">
           <h3 className="font-semibold text-gray-800 mb-4">مسار العملية</h3>
           <Timeline tx={tx} />
         </div>
       </div>
 
-      {/* Images */}
+      {/* الصور */}
       <div className="bg-white rounded-xl shadow-sm p-5">
         <h3 className="font-semibold text-gray-800 mb-4">الصور</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

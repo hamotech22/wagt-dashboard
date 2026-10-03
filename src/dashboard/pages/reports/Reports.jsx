@@ -1,36 +1,10 @@
 import axios from "axios";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { REPORTS, PERIODS, formatCell } from "./reportDefs";
 import { exportCSV, exportPDF } from "./exportUtils";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
-
-const fetchReportLookups = () =>
-  axios
-    .all([
-      axios.get(`${API_URL}/sites`),
-      axios.get(`${API_URL}/gates`),
-      axios.get(`${API_URL}/contractors`),
-      axios.get(`${API_URL}/projects`),
-      axios.get(`${API_URL}/wasteTypes`),
-      axios.get(`${API_URL}/transactionStatuses`),
-    ])
-    .then(([sitesRes, gatesRes, contractorsRes, projectsRes, wasteRes, statusesRes]) => ({
-      sites: sitesRes?.data ?? [],
-      gates: gatesRes?.data ?? [],
-      contractors: contractorsRes?.data ?? [],
-      projects: projectsRes?.data ?? [],
-      wasteTypes: wasteRes?.data ?? [],
-      statuses: statusesRes?.data ?? [],
-    }))
-    .catch(() => ({ sites: [], gates: [], contractors: [], projects: [], wasteTypes: [], statuses: [] }));
-
-const fetchReport = (type, filters, period) =>
-  axios
-    .get(`${API_URL}/reportsData`, { params: { type, period, ...filters } })
-    .then((response) => response.data)
-    .catch(() => ({ columns: [], rows: [] }));
 
 const EMPTY_FILTERS = {
   from: "",
@@ -45,67 +19,101 @@ const EMPTY_FILTERS = {
 };
 
 const inputCls = "border rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500";
+const primaryBtnCls = "bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-medium";
+const outlineBtnCls = "border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed";
 
 export default function Reports() {
   const [type, setType] = useState("movements");
   const [period, setPeriod] = useState("day");
-  const [draft, setDraft] = useState(EMPTY_FILTERS);
-  const [applied, setApplied] = useState(EMPTY_FILTERS);
-  const [lookups, setLookups] = useState(null);
+  const [draft, setDraft] = useState(EMPTY_FILTERS); // القيم أثناء الكتابة
+  const [applied, setApplied] = useState(EMPTY_FILTERS); // القيم المطبّقة فعليًا
+  const [lookups, setLookups] = useState(null); // null = لسه بيحمل
 
   const [data, setData] = useState({ columns: [], rows: [] });
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState({ key: null, dir: "asc" });
 
+  // جلب قوائم الفلاتر
   useEffect(() => {
-    fetchReportLookups().then(setLookups);
+    Promise.all([
+      axios.get(`${API_URL}/sites`),
+      axios.get(`${API_URL}/gates`),
+      axios.get(`${API_URL}/contractors`),
+      axios.get(`${API_URL}/projects`),
+      axios.get(`${API_URL}/wasteTypes`),
+      axios.get(`${API_URL}/transactionStatuses`),
+    ])
+      .then(([sites, gates, contractors, projects, wasteTypes, statuses]) =>
+        setLookups({
+          sites: sites.data,
+          gates: gates.data,
+          contractors: contractors.data,
+          projects: projects.data,
+          wasteTypes: wasteTypes.data,
+          statuses: statuses.data,
+        }),
+      )
+      .catch(() => setLookups({ sites: [], gates: [], contractors: [], projects: [], wasteTypes: [], statuses: [] }));
   }, []);
 
-  // View: يُجلب التقرير عند تغيير النوع أو الفترة أو تطبيق الفلاتر
+  // جلب التقرير عند تغيير النوع أو الفترة أو تطبيق الفلاتر
   useEffect(() => {
     setLoading(true);
     setSort({ key: null, dir: "asc" });
-    fetchReport(type, applied, period).then((d) => {
-      setData(d);
-      setLoading(false);
-    });
+    axios
+      .get(`${API_URL}/reportsData`, { params: { type, period, ...applied } })
+      .then((res) => setData(res.data))
+      .catch(() => setData({ columns: [], rows: [] }))
+      .finally(() => setLoading(false));
   }, [type, applied, period]);
 
-  const set = (k, v) => setDraft((d) => ({ ...d, [k]: v }));
-  const reset = () => {
+  const setFilter = (key, value) => setDraft({ ...draft, [key]: value });
+
+  const resetFilters = () => {
     setDraft(EMPTY_FILTERS);
     setApplied(EMPTY_FILTERS);
   };
 
-  // Sort
-  const rows = useMemo(() => {
-    if (!sort.key) return data.rows;
-    const sorted = [...data.rows].sort((a, b) => {
-      const x = a[sort.key],
-        y = b[sort.key];
+  // الترتيب
+  const toggleSort = (key) => {
+    if (sort.key === key) {
+      setSort({ key, dir: sort.dir === "asc" ? "desc" : "asc" });
+    } else {
+      setSort({ key, dir: "asc" });
+    }
+  };
+
+  let rows = data.rows;
+  if (sort.key) {
+    rows = [...data.rows].sort((a, b) => {
+      const x = a[sort.key];
+      const y = b[sort.key];
       if (x == null) return 1;
       if (y == null) return -1;
       return typeof x === "number" ? x - y : String(x).localeCompare(String(y), "ar");
     });
-    return sort.dir === "asc" ? sorted : sorted.reverse();
-  }, [data.rows, sort]);
-
-  const toggleSort = (key) => setSort((s) => (s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
+    if (sort.dir === "desc") rows.reverse();
+  }
 
   // الإجماليات
-  const totals = useMemo(() => {
-    const t = {};
-    data.columns
-      .filter((c) => c.total)
-      .forEach((c) => {
-        t[c.key] = rows.reduce((s, r) => s + (Number(r[c.key]) || 0), 0);
-      });
-    return t;
-  }, [rows, data.columns]);
-  const hasTotals = Object.keys(totals).length > 0;
+  const totalColumns = data.columns.filter((c) => c.total);
+  const totals = {};
+  totalColumns.forEach((c) => {
+    totals[c.key] = rows.reduce((sum, r) => sum + (Number(r[c.key]) || 0), 0);
+  });
 
   const report = REPORTS.find((r) => r.key === type);
-  const showFilters = type !== "devices";
+  const showFilters = type !== "devices" && lookups;
+
+  // قوائم الفلاتر: [المفتاح، العنوان، الخيارات [قيمة، نص]]
+  const selects = lookups && [
+    ["siteId", "الموقع", lookups.sites.map((s) => [s.id, s.nameAr ?? s.name])],
+    ["gateId", "البوابة", lookups.gates.map((g) => [g.id, g.nameAr ?? g.name])],
+    ["contractorId", "المقاول", lookups.contractors.map((c) => [c.id, c.name])],
+    ["projectId", "المشروع", lookups.projects.map((p) => [p.id, p.name])],
+    ["waste", "نوع النفايات", lookups.wasteTypes.map((w) => [w.code, w.name])],
+    ["status", "حالة العملية", lookups.statuses.map((s) => [s.value, s.label])],
+  ];
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -113,6 +121,7 @@ export default function Reports() {
         <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
         <Breadcrumb.Current>التقارير</Breadcrumb.Current>
       </Breadcrumb>
+
       <div className="print:hidden">
         <h1 className="text-2xl font-bold text-gray-800">التقارير</h1>
         <p className="text-sm text-gray-500">اختر التقرير، حدّد الفلاتر، ثم اعرضه أو صدّره</p>
@@ -135,90 +144,46 @@ export default function Reports() {
         ))}
       </div>
 
-      {/* Filter */}
-      {showFilters && lookups && (
+      {/* الفلاتر */}
+      {showFilters && (
         <div className="bg-white rounded-xl shadow-sm p-4 space-y-3 print:hidden">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <label className="text-xs text-gray-500">
               من تاريخ
-              <input type="date" className={inputCls} value={draft.from} onChange={(e) => set("from", e.target.value)} />
+              <input type="date" className={inputCls} value={draft.from} onChange={(e) => setFilter("from", e.target.value)} />
             </label>
+
             <label className="text-xs text-gray-500">
               إلى تاريخ
-              <input type="date" className={inputCls} value={draft.to} onChange={(e) => set("to", e.target.value)} />
+              <input type="date" className={inputCls} value={draft.to} onChange={(e) => setFilter("to", e.target.value)} />
             </label>
-            <label className="text-xs text-gray-500">
-              الموقع
-              <select className={inputCls} value={draft.siteId} onChange={(e) => set("siteId", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.sites.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs text-gray-500">
-              البوابة
-              <select className={inputCls} value={draft.gateId} onChange={(e) => set("gateId", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.gates.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs text-gray-500">
-              المقاول
-              <select className={inputCls} value={draft.contractorId} onChange={(e) => set("contractorId", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.contractors.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs text-gray-500">
-              المشروع
-              <select className={inputCls} value={draft.projectId} onChange={(e) => set("projectId", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.projects.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs text-gray-500">
-              نوع النفايات
-              <select className={inputCls} value={draft.waste} onChange={(e) => set("waste", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.wasteTypes.map((w) => (
-                  <option key={w.code} value={w.code}>
-                    {w.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-xs text-gray-500">
-              حالة العملية
-              <select className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>
-                <option value="">الكل</option>
-                {lookups.statuses.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+
+            {selects.map(([key, label, options]) => (
+              <label key={key} className="text-xs text-gray-500">
+                {label}
+                <select className={inputCls} value={draft[key]} onChange={(e) => setFilter(key, e.target.value)}>
+                  <option value="">الكل</option>
+                  {options.map(([value, text]) => (
+                    <option key={value} value={value}>
+                      {text}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+
             <label className="text-xs text-gray-500 md:col-span-2">
               رقم اللوحة
-              <input className={inputCls} placeholder="مثال: 1234" value={draft.plate} onChange={(e) => set("plate", e.target.value)} />
+              <input
+                className={inputCls}
+                placeholder="مثال: 1234"
+                value={draft.plate}
+                onChange={(e) => setFilter("plate", e.target.value)}
+              />
             </label>
+
             {type === "byPeriod" && (
-              <label className="text-xs text-gray-500 md:col-span-2">
+              <div className="text-xs text-gray-500 md:col-span-2">
                 نوع الفترة
                 <div className="flex gap-2 mt-1">
                   {PERIODS.map((p) => (
@@ -234,14 +199,15 @@ export default function Reports() {
                     </button>
                   ))}
                 </div>
-              </label>
+              </div>
             )}
           </div>
+
           <div className="flex gap-2">
-            <button onClick={() => setApplied(draft)} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm">
+            <button onClick={() => setApplied(draft)} className={primaryBtnCls}>
               عرض التقرير
             </button>
-            <button onClick={reset} className="border px-5 py-2 rounded-lg text-sm hover:bg-gray-50">
+            <button onClick={resetFilters} className="border px-5 py-2 rounded-lg text-sm hover:bg-gray-50">
               مسح الفلاتر
             </button>
           </div>
@@ -260,19 +226,16 @@ export default function Reports() {
               <span className="hidden print:inline"> — {new Date().toLocaleDateString("ar-SA")}</span>
             </p>
           </div>
+
           <div className="flex gap-2 print:hidden">
             <button
               disabled={loading || rows.length === 0}
               onClick={() => exportCSV(report.key, data.columns, rows)}
-              className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40"
+              className={outlineBtnCls}
             >
               ⬇ Excel / CSV
             </button>
-            <button
-              disabled={loading || rows.length === 0}
-              onClick={exportPDF}
-              className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-40"
-            >
+            <button disabled={loading || rows.length === 0} onClick={exportPDF} className={outlineBtnCls}>
               🖨 PDF
             </button>
           </div>
@@ -296,6 +259,7 @@ export default function Reports() {
                 ))}
               </tr>
             </thead>
+
             <tbody>
               {loading && (
                 <tr>
@@ -304,6 +268,7 @@ export default function Reports() {
                   </td>
                 </tr>
               )}
+
               {!loading && rows.length === 0 && (
                 <tr>
                   <td colSpan={data.columns.length || 1} className="p-8 text-center text-gray-400">
@@ -311,6 +276,7 @@ export default function Reports() {
                   </td>
                 </tr>
               )}
+
               {!loading &&
                 rows.map((r, i) => (
                   <tr key={i} className="border-t hover:bg-gray-50">
@@ -322,7 +288,8 @@ export default function Reports() {
                   </tr>
                 ))}
             </tbody>
-            {!loading && rows.length > 0 && hasTotals && (
+
+            {!loading && rows.length > 0 && totalColumns.length > 0 && (
               <tfoot className="bg-gray-50 font-semibold text-gray-800">
                 <tr className="border-t-2">
                   {data.columns.map((c, i) => (

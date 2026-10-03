@@ -15,7 +15,7 @@ export default function VehicleChart() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
+    <div className="min-w-0 rounded-xl border border-slate-200 bg-white p-5 shadow-sm" dir="rtl">
       {/* العنوان */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="font-bold text-slate-800">حركة المركبات (دخول / خروج)</h2>

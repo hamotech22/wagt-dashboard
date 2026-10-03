@@ -16,7 +16,7 @@ const errorCls = "mt-1 block text-xs text-red-600";
 export default function AddProject() {
   const navigate = useNavigate();
 
-  // ref لكل حقل نصي
+  // ref لكل حقل
   const nameRef = useRef();
   const codeRef = useRef();
   const contractNumberRef = useRef();
@@ -26,9 +26,9 @@ export default function AddProject() {
   const endDateRef = useRef();
   const notesRef = useRef();
 
-  // دول لازم يفضلوا state لأن الشاشة بتتغير لما قيمتهم تتغير
-  const [municipalityId, setMunicipalityId] = useState(""); // عشان قائمة الأحياء تتغير
-  const [contractorIds, setContractorIds] = useState([]); // عشان زرار المقاول يتلون
+  // لازم state لأن الشاشة بتتغير مع قيمتهم
+  const [municipalityId, setMunicipalityId] = useState("");
+  const [contractorIds, setContractorIds] = useState([]);
 
   const [municipalities, setMunicipalities] = useState([]);
   const [contractors, setContractors] = useState([]);
@@ -38,16 +38,16 @@ export default function AddProject() {
   const [saveError, setSaveError] = useState("");
 
   // الأحياء التابعة للبلدية المختارة
-  const subs = municipalities.find((m) => String(m.id) === String(municipalityId))?.subs ?? [];
+  const subs = municipalities.find((m) => String(m.id) === municipalityId)?.subs ?? [];
 
-  // تحميل البلديات والمقاولين أول ما الصفحة تفتح
+  // تحميل البلديات والمقاولين
   useEffect(() => {
     Promise.all([axios.get(`${API_URL}/municipalities`), axios.get(`${API_URL}/contractors`)])
       .then(([municipalitiesRes, contractorsRes]) => {
         setMunicipalities(municipalitiesRes.data);
         setContractors(contractorsRes.data);
       })
-      .catch(() => {}) // لو حصل خطأ هتفضل القوائم فاضية
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -64,7 +64,6 @@ export default function AddProject() {
     event.preventDefault();
     if (saving) return;
 
-    // نقرا القيم من الـ refs
     const data = {
       name: nameRef.current.value.trim(),
       code: codeRef.current.value,
@@ -110,17 +109,16 @@ export default function AddProject() {
         <Breadcrumb.Link to="/dashboard/projects">المشاريع</Breadcrumb.Link>
         <Breadcrumb.Current>إضافة مشروع</Breadcrumb.Current>
       </Breadcrumb>
+
       <h1 className="text-xl font-bold text-slate-900">إضافة مشروع</h1>
       <p className="mt-1 text-sm text-slate-500">أدخل بيانات المشروع واربطه بالبلدية والمقاولين. الحقول المعلَّمة بـ * مطلوبة.</p>
 
-      {loading && (
+      {loading ? (
         <div className="mt-6 animate-pulse space-y-4" aria-busy="true" aria-label="جارٍ التحميل">
           <div className="h-56 rounded-xl bg-slate-100" />
           <div className="h-40 rounded-xl bg-slate-100" />
         </div>
-      )}
-
-      {!loading && (
+      ) : (
         <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="space-y-6 lg:col-span-2">
@@ -172,15 +170,11 @@ export default function AddProject() {
                     <span className={labelCls}>
                       البلدية <span className="text-red-500">*</span>
                     </span>
-                    <select
-                      className={inputCls}
-                      value={municipalityId}
-                      onChange={(event) => setMunicipalityId(event.target.value)}
-                    >
+                    <select className={inputCls} value={municipalityId} onChange={(e) => setMunicipalityId(e.target.value)}>
                       <option value="">اختر البلدية</option>
-                      {municipalities.map((municipality) => (
-                        <option key={municipality.id} value={municipality.id}>
-                          {municipality.name}
+                      {municipalities.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name}
                         </option>
                       ))}
                     </select>
@@ -222,12 +216,7 @@ export default function AddProject() {
 
                   <label className="block sm:col-span-2">
                     <span className={labelCls}>ملاحظات</span>
-                    <textarea
-                      ref={notesRef}
-                      rows={4}
-                      className={inputCls}
-                      placeholder="اكتب أي ملاحظات إضافية عن المشروع"
-                    />
+                    <textarea ref={notesRef} rows={4} className={inputCls} placeholder="اكتب أي ملاحظات إضافية عن المشروع" />
                   </label>
                 </div>
               </section>
@@ -241,34 +230,33 @@ export default function AddProject() {
                   <p className="mt-0.5 text-sm text-slate-500">اختر المقاولين المسند إليهم المشروع.</p>
                 </header>
                 <div className="space-y-3 p-6">
-                  {contractors.length === 0 ? (
-                    <p className="text-sm text-slate-500">لا توجد بيانات للمقاولين.</p>
-                  ) : (
-                    contractors.map((contractor) => {
-                      const isSelected = contractorIds.includes(contractor.id);
-                      return (
-                        <button
-                          key={contractor.id}
-                          type="button"
-                          onClick={() => toggleContractor(contractor.id)}
-                          className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-right text-sm transition ${
-                            isSelected
-                              ? "border-sky-200 bg-sky-50 text-sky-700"
-                              : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  {contractors.length === 0 && <p className="text-sm text-slate-500">لا توجد بيانات للمقاولين.</p>}
+
+                  {contractors.map((contractor) => {
+                    const isSelected = contractorIds.includes(contractor.id);
+                    return (
+                      <button
+                        key={contractor.id}
+                        type="button"
+                        onClick={() => toggleContractor(contractor.id)}
+                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-right text-sm transition ${
+                          isSelected
+                            ? "border-sky-200 bg-sky-50 text-sky-700"
+                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        <span>{contractor.name}</span>
+                        <span
+                          className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
+                            isSelected ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 text-transparent"
                           }`}
                         >
-                          <span>{contractor.name}</span>
-                          <span
-                            className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
-                              isSelected ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 text-transparent"
-                            }`}
-                          >
-                            ✓
-                          </span>
-                        </button>
-                      );
-                    })
-                  )}
+                          ✓
+                        </span>
+                      </button>
+                    );
+                  })}
+
                   {errors.contractorIds && <p className="text-xs text-red-600">{errors.contractorIds}</p>}
                 </div>
               </section>

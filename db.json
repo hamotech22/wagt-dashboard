@@ -646,7 +646,7 @@
       "message": "كاميرا ANPR-02 غير متصلة ببوابة الخروج الرئيسية.",
       "createdAt": "2026-10-02T09:00:00Z",
       "read": true,
-      "resolved": false,
+      "resolved": true,
       "link": "/dashboard/gates/2",
       "demoData": true
     },
@@ -658,7 +658,7 @@
       "message": "آخر اتصال مسجل للبوابة كان في 21 سبتمبر 2026.",
       "createdAt": "2026-10-02T07:30:00Z",
       "read": true,
-      "resolved": false,
+      "resolved": true,
       "link": "/dashboard/gates/2",
       "demoData": true
     },

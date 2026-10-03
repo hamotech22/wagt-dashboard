@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import StatisticsCards from "../components/dashboard/StatisticsCards";
 import VehicleChart from "../components/dashboard/VehicleChart";
 import WasteChart from "../components/dashboard/WasteChart";
@@ -10,23 +8,9 @@ import LocationsMap from "../components/dashboard/LocationsMap";
 // import MadinatiIntegration from "../components/dashboard/MadinatiIntegration";
 import QuickReports from "../components/dashboard/QuickReports";
 import Alerts from "../components/dashboard/Alerts";
-import Loading from "../../components/loading/Loading";
 // import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function Dashboard() {
-  const [showRefreshLoading, setShowRefreshLoading] = useState(
-    () => window.performance.getEntriesByType("navigation")[0]?.type === "reload",
-  );
-
-  useEffect(() => {
-    if (!showRefreshLoading) return undefined;
-
-    const timeoutId = window.setTimeout(() => setShowRefreshLoading(false), 800);
-    return () => window.clearTimeout(timeoutId);
-  }, [showRefreshLoading]);
-
-  if (showRefreshLoading) return <Loading />;
-
   return (
     <div className="min-h-screen p-6" dir="rtl">
       {/* <Breadcrumb>
@@ -43,19 +27,19 @@ export default function Dashboard() {
       <StatisticsCards />
 
       {/* Charts */}
-      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+      <div className="mt-5 grid min-w-0 grid-cols-1 gap-5 lg:grid-cols-3">
         <VehicleChart />
         <WasteChart />
         <ContractorsChart />
       </div>
 
       {/* Operations */}
-      <div className="mt-5 grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
-        <div className="flex lg:col-span-6">
+      <div className="mt-5 grid min-w-0 grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+        <div className="flex min-w-0 lg:col-span-6">
           <RecentOperations />
         </div>
 
-        <div className="flex lg:col-span-6">
+        <div className="flex min-w-0 lg:col-span-6">
           <GatesDevices />
         </div>
 
@@ -65,16 +49,16 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Cards */}
-      <div className="mt-5 grid grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
+      <div className="mt-5 grid min-w-0 grid-cols-1 items-stretch gap-5 lg:grid-cols-3">
         {/* <MadinatiIntegration /> */}
-        <div className="flex">
+        <div className="flex min-w-0">
           <LocationsMap />
         </div>
 
-        <div className="flex">
+        <div className="flex min-w-0">
           <QuickReports />
         </div>
-        <div className="flex">
+        <div className="flex min-w-0">
           <Alerts />
         </div>
       </div>

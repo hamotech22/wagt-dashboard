@@ -16,6 +16,16 @@ const DEFAULT_DIRECTIONS = [
   { value: "out", label: "خروج" },
 ];
 
+// القيم الابتدائية للفورم
+const EMPTY = {
+  nameAr: "",
+  siteId: "",
+  type: "weighbridge",
+  direction: "in",
+  status: "active",
+  integration: { autoSubmit: true, maxRetries: 5 },
+};
+
 function Field({ label, error, children }) {
   return (
     <div>
@@ -29,7 +39,7 @@ function Field({ label, error, children }) {
 export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ" }) {
   const navigate = useNavigate();
 
-  // 1) نعمل ref لكل حقل
+  // ref لكل حقل
   const nameRef = useRef();
   const siteRef = useRef();
   const typeRef = useRef();
@@ -44,7 +54,11 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
 
   // تحميل القوائم (المواقع - الأنواع - الاتجاهات)
   useEffect(() => {
-    Promise.all([axios.get(`${API_URL}/sites`), axios.get(`${API_URL}/gateTypes`), axios.get(`${API_URL}/gateDirections`)])
+    Promise.all([
+      axios.get(`${API_URL}/sites`),
+      axios.get(`${API_URL}/gateTypes`),
+      axios.get(`${API_URL}/gateDirections`),
+    ])
       .then(([sites, types, directions]) =>
         setLookups({
           sites: sites.data,
@@ -55,10 +69,15 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
       .catch(() => setLookups({ sites: [], types: DEFAULT_TYPES, directions: DEFAULT_DIRECTIONS }));
   }, []);
 
+  if (!lookups) return <p>جارِ التحميل...</p>;
+
+  // دمج البيانات الابتدائية مع القيم الافتراضية
+  const d = { ...EMPTY, ...initialData };
+  const integration = { ...EMPTY.integration, ...initialData?.integration };
+
   const handleSubmit = async (ev) => {
     ev.preventDefault();
 
-    // 2) نقرا القيم من الـ refs باستخدام .current
     const nameAr = nameRef.current.value.trim();
     const siteId = siteRef.current.value;
     const maxRetries = Number(maxRetriesRef.current.value);
@@ -72,16 +91,17 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    // 3) نجمع البيانات ونبعتها
+    // جمع البيانات وإرسالها
     setSaving(true);
     await onSubmit({
+      ...initialData,
       nameAr,
       siteId: Number(siteId),
       type: typeRef.current.value,
       direction: directionRef.current.value,
       status: statusRef.current.value,
       integration: {
-        autoSubmit: autoSubmitRef.current.checked, // الـ checkbox بنقرا منه checked
+        autoSubmit: autoSubmitRef.current.checked,
         maxRetries,
       },
     });
@@ -89,50 +109,42 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
     navigate("/dashboard/gates");
   };
 
-  if (!lookups) return <p>جارِ التحميل...</p>;
-
   return (
     <form onSubmit={handleSubmit} dir="rtl" className="space-y-6">
       <section className="bg-white rounded-xl shadow-sm p-5 space-y-4">
         <h2 className="font-semibold text-gray-800">بيانات البوابة</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="اسم البوابة *" error={errors.nameAr}>
-            <input ref={nameRef} defaultValue={initialData?.nameAr ?? ""} className={inputCls} />
+            <input ref={nameRef} defaultValue={d.nameAr} className={inputCls} />
           </Field>
 
           <Field label="الموقع *" error={errors.siteId}>
-            <select ref={siteRef} defaultValue={initialData?.siteId ?? ""} className={inputCls}>
+            <select ref={siteRef} defaultValue={d.siteId} className={inputCls}>
               <option value="">اختر...</option>
               {lookups.sites.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
+                <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
           </Field>
 
           <Field label="نوع البوابة">
-            <select ref={typeRef} defaultValue={initialData?.type ?? "weighbridge"} className={inputCls}>
+            <select ref={typeRef} defaultValue={d.type} className={inputCls}>
               {lookups.types.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
+                <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </Field>
 
           <Field label="الاتجاه">
-            <select ref={directionRef} defaultValue={initialData?.direction ?? "in"} className={inputCls}>
-              {lookups.directions.map((d) => (
-                <option key={d.value} value={d.value}>
-                  {d.label}
-                </option>
+            <select ref={directionRef} defaultValue={d.direction} className={inputCls}>
+              {lookups.directions.map((dir) => (
+                <option key={dir.value} value={dir.value}>{dir.label}</option>
               ))}
             </select>
           </Field>
 
           <Field label="الحالة">
-            <select ref={statusRef} defaultValue={initialData?.status ?? "active"} className={inputCls}>
+            <select ref={statusRef} defaultValue={d.status} className={inputCls}>
               <option value="active">نشطة</option>
               <option value="maintenance">صيانة</option>
               <option value="inactive">غير نشطة</option>
@@ -145,7 +157,7 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
         <h2 className="font-semibold text-gray-800">إعدادات التكامل مع مدينتي</h2>
 
         <label className="flex items-center gap-3 cursor-pointer">
-          <input type="checkbox" ref={autoSubmitRef} defaultChecked={initialData?.integration?.autoSubmit ?? true} className="w-4 h-4" />
+          <input type="checkbox" ref={autoSubmitRef} defaultChecked={integration.autoSubmit} className="w-4 h-4" />
           <span className="text-sm text-gray-700">إرسال العمليات تلقائياً عند اكتمالها</span>
         </label>
 
@@ -156,7 +168,7 @@ export default function GateForm({ initialData, onSubmit, submitLabel = "حفظ"
               min="0"
               max="20"
               ref={maxRetriesRef}
-              defaultValue={initialData?.integration?.maxRetries ?? 5}
+              defaultValue={integration.maxRetries}
               className={inputCls}
             />
           </Field>
