@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo-blue.png";
 
 export default function Login() {
@@ -16,7 +16,7 @@ export default function Login() {
   };
 
   return (
-    <div dir="rtl" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 px-4">
+    <div dir="rtl" className="relative min-h-screen flex items-center justify-center overflow-hidden  px-4">
       {/* Background */}
       <div
         className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full blur-3xl"
@@ -83,12 +83,12 @@ export default function Login() {
           </button>
 
           {/* Register */}
-          <p className="text-center text-sm text-slate-500 mt-1">
+          {/* <p className="text-center text-sm text-slate-500 mt-1">
             ليس لديك حساب؟{" "}
             <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
               إنشاء حساب جديد
             </Link>
-          </p>
+          </p> */}
         </div>
       </form>
     </div>
