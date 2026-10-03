@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+    direction: rtl;
+    text-align: right;
+    background-color: #F1F5F9;
+}
+
+body {
+    margin: 0;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-size: 1rem;
+}
+
+button,
+input,
+textarea,
+select,
+table {
+    font: inherit;
+}
+
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    font-family: "Roboto";
+
+} */

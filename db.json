@@ -1,0 +1,1355 @@
+{
+  "statistics": [
+    {
+      "title": "إجمالي الوزن (طن)",
+      "value": 4850,
+      "percentage": 18,
+      "positive": true,
+      "type": "positive",
+      "icon": "scale",
+      "iconBg": "bg-blue-500",
+      "id": "Rc22T7xb6fU"
+    },
+    {
+      "title": "المركبات الخارجية",
+      "value": 821,
+      "percentage": 13,
+      "positive": true,
+      "type": "positive",
+      "icon": "shipping",
+      "iconBg": "bg-amber-500",
+      "id": "uO1Pp491yV8"
+    },
+    {
+      "title": "المركبات الداخلية",
+      "value": 865,
+      "percentage": 15,
+      "positive": true,
+      "type": "positive",
+      "icon": "car",
+      "iconBg": "bg-emerald-500",
+      "id": "qaxuAzl6NOY"
+    },
+    {
+      "title": "العمليات الفاشلة",
+      "value": 18,
+      "percentage": 21,
+      "positive": false,
+      "type": "negative",
+      "icon": "error",
+      "iconBg": "bg-red-500",
+      "id": "8px_BY7eAYo"
+    },
+    {
+      "title": "العمليات المعلقة",
+      "value": 32,
+      "percentage": 8,
+      "positive": false,
+      "type": "negative",
+      "icon": "time",
+      "iconBg": "bg-violet-500",
+      "id": "E2_vLQO17PU"
+    },
+    {
+      "title": "العمليات المكتملة",
+      "value": 1248,
+      "percentage": 12,
+      "positive": true,
+      "type": "positive",
+      "icon": "completed",
+      "iconBg": "bg-sky-500",
+      "id": "C3jdNZNbTHI"
+    }
+  ],
+  "vehicleMovement": [
+    {
+      "day": "السبت",
+      "entry": 60,
+      "exit": 90,
+      "id": "UKBNybCDuiU"
+    },
+    {
+      "day": "الأحد",
+      "entry": 95,
+      "exit": 140,
+      "id": "nQvunY26zZc"
+    },
+    {
+      "day": "الإثنين",
+      "entry": 60,
+      "exit": 95,
+      "id": "fpdJcTqcRYw"
+    },
+    {
+      "day": "الثلاثاء",
+      "entry": 60,
+      "exit": 90,
+      "id": "zOucrQ5PMcU"
+    },
+    {
+      "day": "الأربعاء",
+      "entry": 100,
+      "exit": 125,
+      "id": "Qtu6WsBQKRg"
+    },
+    {
+      "day": "الخميس",
+      "entry": 60,
+      "exit": 95,
+      "id": "Xb16pWQfjyM"
+    },
+    {
+      "day": "الجمعة",
+      "entry": 100,
+      "exit": 125,
+      "id": "otMVNKvPh_k"
+    }
+  ],
+  "wasteTypes": [
+    {
+      "name": "إجمالي النفايات",
+      "value": 4850,
+      "unit": "طن",
+      "type": "total",
+      "id": "SD-WTx7Aob4"
+    },
+    {
+      "name": "نفايات منزلية",
+      "value": 45,
+      "id": "frEsse0vYp8"
+    },
+    {
+      "name": "نفايات بناء وهدم",
+      "value": 20,
+      "id": "RCUYjWQ05VA"
+    },
+    {
+      "name": "نفايات صناعية",
+      "value": 15,
+      "id": "KA3tsQmTwZE"
+    },
+    {
+      "name": "نفايات طبية",
+      "value": 8,
+      "id": "fTTNWeX83KY"
+    },
+    {
+      "name": "أخرى",
+      "value": 12,
+      "id": "E80zjYF1bGc"
+    }
+  ],
+  "contractorWeights": [
+    {
+      "name": "المقاول الأول",
+      "value": 1280,
+      "id": "jDo2s0WMvtA"
+    },
+    {
+      "name": "المقاول الثاني",
+      "value": 980,
+      "id": "c_NwxSI5Vs8"
+    },
+    {
+      "name": "المقاول الثالث",
+      "value": 760,
+      "id": "HKZXVps8URc"
+    },
+    {
+      "name": "المقاول الرابع",
+      "value": 540,
+      "id": "4d5J0yYu9tI"
+    },
+    {
+      "name": "المقاول الخامس",
+      "value": 310,
+      "id": "nvTtcVNYNbU"
+    }
+  ],
+  "operations": [
+    {
+      "vehicle": "KSA-1234",
+      "contractor": "المقاول الأول",
+      "project": "مشروع نجران",
+      "location": "مردم نجران",
+      "weight": 12.5,
+      "time": "10:12 ص",
+      "status": "مكتملة",
+      "id": "J-1_CRFgllU"
+    },
+    {
+      "vehicle": "KSA-5678",
+      "contractor": "المقاول الثاني",
+      "project": "مشروع نجران",
+      "location": "نفايات بناء وهدم",
+      "weight": 9.8,
+      "time": "09:48 ص",
+      "status": "مكتملة",
+      "id": "SjWFZyQ_VqE"
+    },
+    {
+      "vehicle": "KSA-9012",
+      "contractor": "المقاول الثالث",
+      "project": "مشروع نجران",
+      "location": "مردم نجران",
+      "weight": 0,
+      "time": "09:32 ص",
+      "status": "معلقة",
+      "id": "oghmNH8bVeI"
+    },
+    {
+      "vehicle": "KSA-3456",
+      "contractor": "المقاول الأول",
+      "project": "مشروع نجران",
+      "location": "مردم نجران",
+      "weight": 0,
+      "time": "08:57 ص",
+      "status": "فاشلة",
+      "id": "qYemQEExEK0"
+    },
+    {
+      "vehicle": "KSA-7788",
+      "contractor": "المقاول الرابع",
+      "project": "مشروع نجران",
+      "location": "نفايات منزلية",
+      "weight": 11.2,
+      "time": "08:20 ص",
+      "status": "مكتملة",
+      "id": "FStzU2-1syc"
+    }
+  ],
+  "reports": [
+    {
+      "id": "1",
+      "type": "contractors",
+      "title": "تقرير المقاولين"
+    },
+    {
+      "id": "2",
+      "type": "weights",
+      "title": "تقرير الأوزان"
+    },
+    {
+      "id": "3",
+      "type": "waste",
+      "title": "تقرير نوع النفايات"
+    },
+    {
+      "id": "4",
+      "type": "locations",
+      "title": "تقرير المواقع"
+    }
+  ],
+  "gatesDevices": [
+    {
+      "id": "1",
+      "type": "gate",
+      "name": "البوابة الرئيسية",
+      "location": "مدخل الموقع الرئيسي",
+      "online": true,
+      "status": "عاملة"
+    },
+    {
+      "id": "2",
+      "type": "gate",
+      "name": "البوابة الخلفية",
+      "location": "الجهة الشمالية",
+      "online": false,
+      "status": "متوقفة"
+    },
+    {
+      "id": "3",
+      "type": "device",
+      "name": "جهاز الوزن 1",
+      "location": "منطقة الميزان",
+      "online": true,
+      "status": "متصل"
+    },
+    {
+      "id": "4",
+      "type": "device",
+      "name": "جهاز الوزن 2",
+      "location": "الموقع 2",
+      "online": false,
+      "status": "غير متصل"
+    }
+  ],
+  "alerts": [
+    {
+      "title": "انخفاض مستوى الاتصال بجهاز الوزن في الموقع 2",
+      "time": "منذ 15 دقيقة",
+      "type": "error",
+      "id": "fzMUvjfcbOQ"
+    },
+    {
+      "title": "تم تسجيل عملية دخول غير مصرح بها",
+      "time": "منذ 30 دقيقة",
+      "type": "warning",
+      "id": "TAhNhzH215I"
+    },
+    {
+      "title": "تم استلام بيانات جديدة من منصة مدينتي",
+      "time": "منذ ساعة",
+      "type": "info",
+      "id": "kNiL1VvisNA"
+    },
+    {
+      "title": "مباينة مكتملة بنجاح",
+      "time": "منذ 3 ساعات",
+      "type": "success",
+      "id": "qV3macCVOeY"
+    }
+  ],
+  "municipalities": [
+    {
+      "id": "1",
+      "name": "المدينة الوسطى",
+      "subs": [
+        {
+          "id": 11,
+          "name": "الحي المركزي"
+        },
+        {
+          "id": 12,
+          "name": "الحي الغربي"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "المدينة الشمالية",
+      "subs": [
+        {
+          "id": 21,
+          "name": "الحي الشمالي"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "المدينة الجنوبية",
+      "subs": [
+        {
+          "id": 31,
+          "name": "الحي الجنوبي"
+        },
+        {
+          "id": 32,
+          "name": "الحي الجديد"
+        }
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "id": "1",
+      "name": "أمانة منطقة نجران",
+      "slug": "najran",
+      "code": "ORG-001",
+      "municipalityCode": "9",
+      "email": "info@najran.gov.sa",
+      "phone": "+966 500000001",
+      "website": "https://najran.gov.sa",
+      "city": "نجران",
+      "region": "منطقة نجران",
+      "address": "حي الفهد، شارع الملك عبدالعزيز",
+      "status": "active",
+      "createdAt": "2024-01-10"
+    },
+    {
+      "id": "2",
+      "name": "بلدية الرياض",
+      "slug": "riyadh",
+      "code": "ORG-002",
+      "municipalityCode": "",
+      "email": "info@riyadh.gov.sa",
+      "phone": "+966 500000002",
+      "website": "https://riyadh.gov.sa",
+      "city": "الرياض",
+      "region": "منطقة الرياض",
+      "address": "حي الملز، شارع الأمير محمد بن عبدالعزيز",
+      "status": "active",
+      "createdAt": "2024-02-12"
+    },
+    {
+      "id": "3",
+      "name": "بلدية جدة",
+      "slug": "jeddah",
+      "code": "ORG-003",
+      "municipalityCode": "",
+      "email": "info@jeddah.gov.sa",
+      "phone": "+966 500000003",
+      "website": "",
+      "city": "جدة",
+      "region": "منطقة مكة المكرمة",
+      "address": "حي الروضة",
+      "status": "active",
+      "createdAt": "2024-03-05"
+    }
+  ],
+  "subMunicipalities": [
+    {
+      "id": "1",
+      "organizationId": 1,
+      "code": "901",
+      "arabicName": "بلدية شرورة",
+      "isRelatedSubMunicipality": true
+    },
+    {
+      "id": "2",
+      "organizationId": 1,
+      "code": "902",
+      "arabicName": "بلدية يدمة",
+      "isRelatedSubMunicipality": true
+    },
+    {
+      "id": "3",
+      "organizationId": 1,
+      "code": "903",
+      "arabicName": "بلدية بدر الجنوب",
+      "isRelatedSubMunicipality": false
+    },
+    {
+      "id": "4",
+      "organizationId": 2,
+      "code": "201",
+      "arabicName": "بلدية العليا الفرعية",
+      "isRelatedSubMunicipality": true
+    }
+  ],
+  "contractors": [
+    {
+      "id": "1",
+      "name": "شركة الأمل للخدمات البيئية"
+    },
+    {
+      "id": "2",
+      "name": "مؤسسة الواحة للمقاولات"
+    },
+    {
+      "id": "3",
+      "name": "مقاول الخليج"
+    },
+    {
+      "id": "4",
+      "name": "مقاول النخيل"
+    }
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "name": "مشروع النخيل",
+      "code": "PRJ-1001",
+      "contractNumber": "CT-101",
+      "municipalityId": 1,
+      "subMunicipalityId": 11,
+      "contractorIds": [
+        1,
+        2
+      ],
+      "status": "active",
+      "startDate": "2024-01-10",
+      "endDate": "2025-01-10",
+      "notes": "مشروع متابعة النفايات المنزلية والصناعية",
+      "createdAt": "2024-01-10T00:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "مشروع الروضة",
+      "code": "PRJ-1002",
+      "contractNumber": "CT-202",
+      "municipalityId": 2,
+      "subMunicipalityId": 21,
+      "contractorIds": [
+        2
+      ],
+      "status": "pending",
+      "startDate": "2024-02-12",
+      "endDate": "2025-02-12",
+      "notes": "مشروع تجميع النفايات في المنطقة الشمالية",
+      "createdAt": "2024-02-12T00:00:00Z"
+    },
+    {
+      "id": "3",
+      "name": "مشروع السد",
+      "code": "PRJ-1003",
+      "contractNumber": "CT-303",
+      "municipalityId": 3,
+      "subMunicipalityId": 31,
+      "contractorIds": [
+        3
+      ],
+      "status": "completed",
+      "startDate": "2023-09-03",
+      "endDate": "2024-09-03",
+      "notes": "مشروع إنجاز الحراسة والفرز بالموقع",
+      "createdAt": "2023-09-03T00:00:00Z"
+    },
+    {
+      "id": "4",
+      "name": "مشروع الأفق",
+      "code": "PRJ-1004",
+      "contractNumber": "CT-404",
+      "municipalityId": 1,
+      "subMunicipalityId": 12,
+      "contractorIds": [
+        1
+      ],
+      "status": "active",
+      "startDate": "2024-04-01",
+      "endDate": "2025-04-01",
+      "notes": "مشروع تجميع النفايات للمناطق العمرانية",
+      "createdAt": "2024-04-01T00:00:00Z"
+    }
+  ],
+  "sites": [
+    {
+      "id": "1",
+      "projectId": 1,
+      "name": "مردم نجران",
+      "finalDestinationCode": "FD-001",
+      "active": true,
+      "lat": 17.5656,
+      "lng": 44.2289,
+      "demoCoordinates": true,
+      "wasteTypeCodes": [
+        166,
+        156
+      ],
+      "totalCapacity": 100000,
+      "currentCapacity": 25000,
+      "demoData": true
+    },
+    {
+      "id": "2",
+      "projectId": 1,
+      "name": "مردم شرورة",
+      "finalDestinationCode": "FD-002",
+      "active": true,
+      "lat": 17.4667,
+      "lng": 47.1167,
+      "demoCoordinates": true,
+      "wasteTypeCodes": [
+        156,
+        24
+      ],
+      "totalCapacity": 80000,
+      "currentCapacity": 36000,
+      "demoData": true
+    },
+    {
+      "id": "3",
+      "projectId": 2,
+      "name": "موقع الروضة",
+      "finalDestinationCode": "FD-011",
+      "active": false,
+      "lat": 24.7136,
+      "lng": 46.6753,
+      "demoCoordinates": true,
+      "wasteTypeCodes": [
+        24,
+        166
+      ],
+      "totalCapacity": 65000,
+      "currentCapacity": 18200,
+      "demoData": true
+    },
+    {
+      "id": "4",
+      "projectId": 3,
+      "name": "موقع السد",
+      "finalDestinationCode": "FD-021",
+      "active": true,
+      "lat": 21.4858,
+      "lng": 39.1925,
+      "demoCoordinates": true,
+      "wasteTypeCodes": [
+        166,
+        156,
+        24
+      ],
+      "totalCapacity": 90000,
+      "currentCapacity": 54000,
+      "demoData": true
+    }
+  ],
+  "gates": [
+    {
+      "id": "1",
+      "name": "بوابة الدخول الرئيسية",
+      "siteId": 1,
+      "type": "weighbridge",
+      "direction": "in",
+      "lastConnection": "2026-09-21T10:00:00Z",
+      "status": "online"
+    },
+    {
+      "id": "2",
+      "name": "بوابة الخروج الرئيسية",
+      "siteId": 1,
+      "type": "standard",
+      "direction": "out",
+      "lastConnection": "2026-09-21T07:00:00Z",
+      "status": "offline"
+    },
+    {
+      "id": "3",
+      "name": "بوابة شرورة",
+      "siteId": 2,
+      "type": "standard",
+      "direction": "both",
+      "lastConnection": null,
+      "status": "online"
+    }
+  ],
+  "devices": [
+    {
+      "name": "كاميرا ANPR-01",
+      "type": "كاميرا ANPR",
+      "gate": "بوابة الدخول الرئيسية",
+      "connectionId": "ANPR-NJR-001",
+      "ip": "192.0.2.10",
+      "connection": "متصل",
+      "lastSeen": "2026-09-21T10:00:00Z",
+      "demoData": true,
+      "id": "NF9a1Y5k26E"
+    },
+    {
+      "name": "ميزان 60 طن",
+      "type": "ميزان",
+      "gate": "بوابة الدخول الرئيسية",
+      "connectionId": "SCALE-NJR-001",
+      "ip": "192.0.2.11",
+      "connection": "متصل",
+      "lastSeen": "2026-09-21T10:00:00Z",
+      "demoData": true,
+      "id": "WKaE2okTJyM"
+    },
+    {
+      "name": "كاميرا ANPR-02",
+      "type": "كاميرا ANPR",
+      "gate": "بوابة الخروج الرئيسية",
+      "connectionId": "ANPR-NJR-002",
+      "ip": "192.0.2.12",
+      "connection": "غير متصل",
+      "lastSeen": "2026-09-21T07:00:00Z",
+      "demoData": true,
+      "id": "Zri3-QfRAvc"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "type": "device",
+      "severity": "critical",
+      "title": "انقطاع اتصال كاميرا ANPR-02",
+      "message": "كاميرا ANPR-02 غير متصلة ببوابة الخروج الرئيسية.",
+      "createdAt": "2026-10-02T09:00:00Z",
+      "read": true,
+      "resolved": false,
+      "link": "/dashboard/gates/2",
+      "demoData": true
+    },
+    {
+      "id": "2",
+      "type": "gate",
+      "severity": "warning",
+      "title": "بوابة الخروج الرئيسية غير متصلة",
+      "message": "آخر اتصال مسجل للبوابة كان في 21 سبتمبر 2026.",
+      "createdAt": "2026-10-02T07:30:00Z",
+      "read": true,
+      "resolved": false,
+      "link": "/dashboard/gates/2",
+      "demoData": true
+    },
+    {
+      "id": "3",
+      "type": "system",
+      "severity": "info",
+      "title": "تم تحديث بيانات المواقع",
+      "message": "تم تحديث بيانات السعة وأنواع النفايات التجريبية للمواقع.",
+      "createdAt": "2026-10-01T12:00:00Z",
+      "read": true,
+      "resolved": true,
+      "demoData": true
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "1",
+      "plateNumber": "1234",
+      "plateChars": "أ ب ج",
+      "type": "dump",
+      "contractorId": 1,
+      "projectId": 1,
+      "status": "active",
+      "source": "manual",
+      "createdAt": "2026-04-02T09:00:00Z",
+      "updatedAt": "2026-08-15T10:20:00Z"
+    },
+    {
+      "id": "2",
+      "plateNumber": "5678",
+      "plateChars": "د هـ و",
+      "type": "compactor",
+      "contractorId": 1,
+      "projectId": 1,
+      "status": "active",
+      "source": "import",
+      "createdAt": "2026-04-02T09:05:00Z",
+      "updatedAt": "2026-04-02T09:05:00Z"
+    },
+    {
+      "id": "3",
+      "plateNumber": "9012",
+      "plateChars": "ر س ص",
+      "type": "truck",
+      "contractorId": 2,
+      "projectId": 2,
+      "status": "suspended",
+      "source": "manual",
+      "createdAt": "2026-05-11T12:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "1",
+      "vehicleId": 1,
+      "projectId": 1,
+      "siteId": 1,
+      "contractorId": 1,
+      "entryGateId": 1,
+      "wasteTypeCode": 166,
+      "entryAt": "2026-09-19T08:10:00Z",
+      "exitAt": "2026-09-19T10:10:00Z",
+      "inWeight": 15000,
+      "outWeight": 9000,
+      "status": "completed",
+      "vehicle": {
+        "num": "1234",
+        "chars": "أ ب ج",
+        "key": "1234"
+      }
+    },
+    {
+      "id": "2",
+      "vehicleId": 2,
+      "projectId": 1,
+      "siteId": 1,
+      "contractorId": 1,
+      "entryGateId": 2,
+      "wasteTypeCode": 156,
+      "entryAt": "2026-09-18T13:45:00Z",
+      "exitAt": null,
+      "inWeight": null,
+      "outWeight": null,
+      "status": "cancelled",
+      "vehicle": {
+        "num": "5678",
+        "chars": "د هـ و",
+        "key": "5678"
+      }
+    },
+    {
+      "id": "3",
+      "vehicleId": 3,
+      "projectId": 2,
+      "siteId": 3,
+      "contractorId": 2,
+      "entryGateId": 3,
+      "wasteTypeCode": 24,
+      "entryAt": "2026-09-17T09:30:00Z",
+      "exitAt": "2026-09-17T11:00:00Z",
+      "inWeight": 12000,
+      "outWeight": 7300,
+      "status": "completed",
+      "vehicle": {
+        "num": "9012",
+        "chars": "ر س ص",
+        "key": "9012"
+      }
+    }
+  ],
+  "wasteTypesRef": [
+    {
+      "code": 24,
+      "name": "تجاري",
+      "id": "53Q3mMMZmXY"
+    },
+    {
+      "code": 156,
+      "name": "إنشائي",
+      "id": "SFCGccNrVkk"
+    },
+    {
+      "code": 166,
+      "name": "منزلي",
+      "id": "qiNev3XM8b8"
+    }
+  ],
+  "roles": [
+    {
+      "id": "1",
+      "nameAr": "مدير النظام",
+      "description": "صلاحيات كاملة على كل شيء — دور محمي",
+      "isSystem": true,
+      "locked": true,
+      "permissions": {
+        "tenants": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "projects": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "contractors": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "users": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "roles": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "audit": [
+          "view",
+          "export"
+        ],
+        "sites": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "gates": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "devices": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "vehicles": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "transactions": [
+          "view",
+          "edit",
+          "approve",
+          "export",
+          "cancel"
+        ],
+        "integration": [
+          "view",
+          "edit",
+          "retry",
+          "export"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "nameAr": "مدير المنصة",
+      "description": "إدارة المنصة والجهات دون تعديل الأدوار",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "tenants": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "projects": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "contractors": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "users": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "roles": [
+          "view"
+        ],
+        "audit": [
+          "view",
+          "export"
+        ],
+        "sites": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "gates": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "devices": [
+          "view",
+          "create",
+          "edit",
+          "delete"
+        ],
+        "vehicles": [
+          "view",
+          "create",
+          "edit",
+          "delete",
+          "export"
+        ],
+        "transactions": [
+          "view",
+          "edit",
+          "approve",
+          "export",
+          "cancel"
+        ],
+        "integration": [
+          "view",
+          "edit",
+          "retry",
+          "export"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "nameAr": "مدير البلدية",
+      "description": "متابعة مشاريع البلدية ومقاوليها ومواقعها",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "projects": [
+          "view",
+          "create",
+          "edit"
+        ],
+        "contractors": [
+          "view",
+          "create",
+          "edit",
+          "export"
+        ],
+        "transactions": [
+          "view",
+          "approve",
+          "export"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ],
+        "users": [
+          "view",
+          "create",
+          "edit"
+        ]
+      }
+    },
+    {
+      "id": "4",
+      "nameAr": "مدير المشروع",
+      "description": "إدارة مركبات وعمليات المشروع",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "vehicles": [
+          "view",
+          "create",
+          "edit",
+          "export"
+        ],
+        "transactions": [
+          "view",
+          "edit",
+          "approve",
+          "export"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "5",
+      "nameAr": "مشغّل بوابة",
+      "description": "تشغيل البوابة ومتابعة العمليات اليومية",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "gates": [
+          "view"
+        ],
+        "devices": [
+          "view"
+        ],
+        "vehicles": [
+          "view",
+          "create"
+        ],
+        "transactions": [
+          "view",
+          "edit",
+          "cancel"
+        ]
+      }
+    },
+    {
+      "id": "6",
+      "nameAr": "مستخدم تقارير",
+      "description": "عرض وتصدير التقارير فقط",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "transactions": [
+          "view"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "7",
+      "nameAr": "مسؤول التكامل",
+      "description": "متابعة التكامل مع مدينتي وإعادة إرسال العمليات",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "transactions": [
+          "view"
+        ],
+        "integration": [
+          "view",
+          "edit",
+          "retry",
+          "export"
+        ],
+        "reports": [
+          "view"
+        ]
+      }
+    },
+    {
+      "id": "8",
+      "nameAr": "مدقق",
+      "description": "اطلاع كامل بدون تعديل مع تصدير سجل التدقيق",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "tenants": [
+          "view"
+        ],
+        "projects": [
+          "view"
+        ],
+        "contractors": [
+          "view"
+        ],
+        "users": [
+          "view"
+        ],
+        "roles": [
+          "view"
+        ],
+        "audit": [
+          "view",
+          "export"
+        ],
+        "sites": [
+          "view"
+        ],
+        "gates": [
+          "view"
+        ],
+        "devices": [
+          "view"
+        ],
+        "vehicles": [
+          "view"
+        ],
+        "transactions": [
+          "view"
+        ],
+        "integration": [
+          "view"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "9",
+      "nameAr": "مدير المقاول",
+      "description": "متابعة مركبات المقاول ومشاريعه وعملياته وتقاريره فقط",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "vehicles": [
+          "view",
+          "create",
+          "edit"
+        ],
+        "transactions": [
+          "view"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "10",
+      "nameAr": "مدير الموقع",
+      "description": "إدارة بوابات وأجهزة الموقع ومتابعة عملياته",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "gates": [
+          "view",
+          "create",
+          "edit"
+        ],
+        "devices": [
+          "view",
+          "create",
+          "edit"
+        ],
+        "vehicles": [
+          "view"
+        ],
+        "transactions": [
+          "view",
+          "edit",
+          "approve"
+        ],
+        "reports": [
+          "view",
+          "export"
+        ]
+      }
+    },
+    {
+      "id": "11",
+      "nameAr": "مستخدم مراقبة",
+      "description": "اطلاع فوري على حالة البوابات والأجهزة والعمليات دون تعديل",
+      "isSystem": true,
+      "locked": false,
+      "permissions": {
+        "gates": [
+          "view"
+        ],
+        "devices": [
+          "view"
+        ],
+        "vehicles": [
+          "view"
+        ],
+        "transactions": [
+          "view"
+        ],
+        "integration": [
+          "view"
+        ]
+      }
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "fullName": "جاد المولى حمدو",
+      "username": "jad.hamdo",
+      "email": "jad@example.com",
+      "phone": "0500000001",
+      "roleId": 1,
+      "status": "active",
+      "mfaEnabled": true,
+      "scopeLevel": "platform",
+      "scopeIds": [],
+      "modules": [
+        "executive",
+        "smart_gates",
+        "madinaty",
+        "reports"
+      ],
+      "lastLogin": "2026-09-20T07:30:00",
+      "createdAt": "2026-03-01"
+    },
+    {
+      "id": "2",
+      "fullName": "محمد آل مريع",
+      "username": "m.almuraya",
+      "email": "mohammed@najran.gov",
+      "phone": "0500000002",
+      "roleId": 3,
+      "status": "active",
+      "mfaEnabled": true,
+      "scopeLevel": "municipality",
+      "scopeIds": [
+        1
+      ],
+      "modules": [
+        "executive",
+        "smart_gates",
+        "reports"
+      ],
+      "lastLogin": "2026-09-20T06:45:00",
+      "createdAt": "2026-03-05"
+    },
+    {
+      "id": "3",
+      "fullName": "سعد القحطاني",
+      "username": "s.qahtani",
+      "email": "saad@contractor.sa",
+      "phone": "0500000003",
+      "roleId": 4,
+      "status": "active",
+      "mfaEnabled": false,
+      "scopeLevel": "project",
+      "scopeIds": [
+        1
+      ],
+      "modules": [
+        "smart_gates",
+        "reports"
+      ],
+      "lastLogin": "2026-09-19T14:10:00",
+      "createdAt": "2026-03-12"
+    },
+    {
+      "id": "4",
+      "fullName": "خالد اليامي",
+      "username": "k.yami",
+      "email": "khaled@najran.gov",
+      "phone": "",
+      "roleId": 5,
+      "status": "active",
+      "mfaEnabled": false,
+      "scopeLevel": "gate",
+      "scopeIds": [
+        1,
+        2
+      ],
+      "modules": [
+        "smart_gates"
+      ],
+      "lastLogin": "2026-09-20T05:58:00",
+      "createdAt": "2026-03-15"
+    },
+    {
+      "id": "5",
+      "fullName": "فهد القرني",
+      "username": "f.alqarni",
+      "email": "fahad@alamal.sa",
+      "phone": "0500000005",
+      "roleId": 9,
+      "status": "active",
+      "mfaEnabled": false,
+      "scopeLevel": "contractor",
+      "scopeIds": [
+        1
+      ],
+      "modules": [
+        "smart_gates",
+        "reports"
+      ],
+      "lastLogin": "2026-09-21T09:15:00",
+      "createdAt": "2026-04-01"
+    },
+    {
+      "id": "6",
+      "fullName": "عبدالله الشهري",
+      "username": "a.alshehri",
+      "email": "abdullah@najran.gov",
+      "phone": "0500000006",
+      "roleId": 10,
+      "status": "active",
+      "mfaEnabled": true,
+      "scopeLevel": "site",
+      "scopeIds": [
+        1
+      ],
+      "modules": [
+        "smart_gates",
+        "reports"
+      ],
+      "lastLogin": "2026-09-21T08:40:00",
+      "createdAt": "2026-04-03"
+    },
+    {
+      "id": "7",
+      "fullName": "نورة العتيبي",
+      "username": "n.alotaibi",
+      "email": "noura@najran.gov",
+      "phone": "0500000007",
+      "roleId": 11,
+      "status": "active",
+      "mfaEnabled": true,
+      "scopeLevel": "municipality",
+      "scopeIds": [
+        1
+      ],
+      "modules": [
+        "executive",
+        "smart_gates",
+        "madinaty"
+      ],
+      "lastLogin": "2026-09-21T10:02:00",
+      "createdAt": "2026-04-05"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
