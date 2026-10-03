@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge, MfaBadge, Avatar, formatDate, scopeText } from "./UserBadges";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 const ACTIONS = [
@@ -66,6 +67,11 @@ export default function UserDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/users">المستخدمون والصلاحيات</Breadcrumb.Link>
+        <Breadcrumb.Current>{user.fullName}</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Avatar name={user.fullName} size="w-14 h-14 text-lg" />

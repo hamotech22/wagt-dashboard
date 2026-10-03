@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -123,16 +124,13 @@ export default function OrganizationDetails() {
 
   return (
     <div className="space-y-6 p-6">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/organizations">الجهات والبلديات</Breadcrumb.Link>
+        <Breadcrumb.Current>{organization.name}</Breadcrumb.Current>
+      </Breadcrumb>
       {/* الرأس */}
       <div>
-        <nav aria-label="مسار التنقل" className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-          <button type="button" onClick={() => navigate("/dashboard/organizations")} className="hover:text-sky-600">
-            الجهات والبلديات
-          </button>
-          <span aria-hidden="true">/</span>
-          <span className="text-slate-800">{organization.name}</span>
-        </nav>
-
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex flex-wrap items-center gap-3">

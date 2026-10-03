@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -106,18 +107,11 @@ export default function EditOrganization() {
 
   return (
     <div className="p-6">
-      <nav aria-label="مسار التنقل" className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-        <button type="button" onClick={() => navigate("/dashboard/organizations")} className="hover:text-sky-600">
-          الجهات والبلديات
-        </button>
-        <span aria-hidden="true">/</span>
-        <button type="button" onClick={() => navigate(`/dashboard/organizations/${id}`)} className="hover:text-sky-600">
-          {form.name}
-        </button>
-        <span aria-hidden="true">/</span>
-        <span className="text-slate-800">تعديل</span>
-      </nav>
-
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/organizations">الجهات والبلديات</Breadcrumb.Link>
+        <Breadcrumb.Current>تعديل الجهة</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-xl font-bold text-slate-900">تعديل الجهة</h1>
       <p className="mt-1 text-sm text-slate-500">عدّل بيانات الجهة ثم احفظ التغييرات.</p>
 

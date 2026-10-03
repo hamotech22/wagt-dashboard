@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const CONTRACTORS = [
   {
@@ -98,6 +99,11 @@ export default function ContractorDetails() {
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 p-6 text-slate-900">
       <div className="mx-auto w-full max-w-7xl">
+        <Breadcrumb>
+          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+          <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
+          <Breadcrumb.Current>{c.commercialName}</Breadcrumb.Current>
+        </Breadcrumb>
         <button onClick={() => navigate("/dashboard/contractors")} className="mb-4 text-sm text-teal-700 hover:underline">
           ‹ العودة إلى المقاولين
         </button>

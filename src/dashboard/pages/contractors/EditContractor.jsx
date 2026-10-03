@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 // بيانات تجريبية: في الحقيقي تيجي من الـ API أو من prop
 const SAMPLE = {
@@ -39,6 +40,11 @@ export default function EditContractor({ contractor = SAMPLE, onSave, onCancel }
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 p-6 text-slate-900">
       <div className="mx-auto w-full max-w-7xl">
+        <Breadcrumb>
+          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+          <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
+          <Breadcrumb.Current>تعديل المقاول</Breadcrumb.Current>
+        </Breadcrumb>
         <h1 className="mb-1 text-2xl font-bold">تعديل المقاول</h1>
         <p dir="ltr" className="mb-6 text-start text-sm text-slate-500">{form.id}</p>
 

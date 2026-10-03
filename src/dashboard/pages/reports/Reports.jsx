@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { REPORTS, PERIODS, formatCell } from "./reportDefs";
 import { exportCSV, exportPDF } from "./exportUtils";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -108,6 +109,10 @@ export default function Reports() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>التقارير</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="print:hidden">
         <h1 className="text-2xl font-bold text-gray-800">التقارير</h1>
         <p className="text-sm text-gray-500">اختر التقرير، حدّد الفلاتر، ثم اعرضه أو صدّره</p>

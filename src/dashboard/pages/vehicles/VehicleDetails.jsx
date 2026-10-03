@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge, SourceBadge, PlateBadge, TX_STATUS, formatDate } from "./VehicleBadges";
 import { VEHICLE_TYPES } from "./vehicleTypes";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -57,6 +58,11 @@ export default function VehicleDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/vehicles">المركبات</Breadcrumb.Link>
+        <Breadcrumb.Current>تفاصيل المركبة</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <PlateBadge number={vehicle.plateNumber} chars={vehicle.plateChars} size="lg" />

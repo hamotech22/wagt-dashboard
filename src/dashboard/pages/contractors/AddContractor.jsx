@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const EMPTY = {
   legalName: "",
@@ -36,6 +37,11 @@ export default function AddContractor({ onSave, onCancel }) {
   return (
     <div dir="rtl" className="min-h-screen p-6 text-slate-900">
       <div className="w-full">
+        <Breadcrumb>
+          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+          <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
+          <Breadcrumb.Current>إضافة مقاول</Breadcrumb.Current>
+        </Breadcrumb>
         <h1 className="mb-6 text-2xl font-bold">إضافة مقاول</h1>
 
         <div className="space-y-5 rounded-lg border border-slate-200 bg-white p-6">

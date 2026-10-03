@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import { Link } from "react-router-dom";
 
 const API_URL = "http://localhost:3000";
@@ -109,6 +110,10 @@ export default function Notifications() {
 
   return (
     <div dir="rtl" className="w-full p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>التنبيهات</Breadcrumb.Current>
+      </Breadcrumb>
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
           {error}

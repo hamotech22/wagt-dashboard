@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -89,6 +90,10 @@ export default function OrganizationsList() {
 
   return (
     <div className="space-y-6 p-6">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>الجهات والبلديات</Breadcrumb.Current>
+      </Breadcrumb>
       <div>
         <h1 className="text-xl font-bold text-slate-900">إدارة الجهات والبلديات</h1>
         <p className="mt-1 text-sm text-slate-500">الجهات المستفيدة والبلديات وربطها بالبلديات الفرعية والمشاريع.</p>

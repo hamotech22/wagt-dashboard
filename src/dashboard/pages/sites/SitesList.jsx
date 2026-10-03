@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import StatusBadge from "./StatusBadge";
 
 const API_URL = "http://localhost:3000";
@@ -74,6 +75,10 @@ export default function SitesList() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>المواقع</Breadcrumb.Current>
+      </Breadcrumb>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

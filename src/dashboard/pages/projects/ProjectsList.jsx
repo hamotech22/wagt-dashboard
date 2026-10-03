@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -87,6 +88,10 @@ export default function ProjectsList() {
 
   return (
     <div className="space-y-6 p-6">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>المشاريع</Breadcrumb.Current>
+      </Breadcrumb>
       <div>
         <h1 className="text-xl font-bold text-slate-900">إدارة المشاريع</h1>
         <p className="mt-1 text-sm text-slate-500">المشاريع التعاقدية وربطها بالبلديات والمقاولين والمواقع.</p>

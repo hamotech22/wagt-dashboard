@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import DeviceForm from "./DeviceForm";
 
 const API_URL = "http://localhost:3000";
@@ -24,6 +25,11 @@ export default function EditDevice() {
 
   return (
     <div dir="rtl" className="w-full p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/devices">الأجهزة</Breadcrumb.Link>
+        <Breadcrumb.Current>تعديل الجهاز</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-2xl font-bold text-gray-800">تعديل الجهاز</h1>
       <DeviceForm initialData={device} onSubmit={(d) => updateDevice(id, d)} submitLabel="حفظ التعديلات" />
     </div>

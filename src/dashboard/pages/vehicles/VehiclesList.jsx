@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import { StatusBadge, SourceBadge, PlateBadge } from "./VehicleBadges";
 import { VEHICLE_TYPES } from "./vehicleTypes";
 
@@ -88,6 +89,10 @@ export default function VehiclesList() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>المركبات</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">إدارة المركبات</h1>

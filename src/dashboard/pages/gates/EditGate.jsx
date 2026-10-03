@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import GateForm from "./GateForm";
 
 const API_URL = "http://localhost:3000";
@@ -24,6 +25,11 @@ export default function EditGate() {
 
   return (
     <div dir="rtl" className="w-full p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/gates">البوابات</Breadcrumb.Link>
+        <Breadcrumb.Current>تعديل البوابة</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-2xl font-bold text-gray-800">تعديل البوابة</h1>
       <GateForm initialData={gate} onSubmit={(d) => updateGate(id, d)} submitLabel="حفظ التعديلات" />
     </div>

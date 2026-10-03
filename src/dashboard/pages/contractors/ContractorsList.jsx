@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import AddContractor from "./AddContractor";
 import EditContractor from "./EditContractor";
 
@@ -124,7 +125,11 @@ export default function ContractorsList() {
 
   return (
     <div dir="rtl" className="min-h-screen w-full p-6 text-slate-900">
-      <div className="mx-auto w-full max-w-7xl">
+      <div className="w-full">
+        <Breadcrumb>
+          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+          <Breadcrumb.Current>المقاولون</Breadcrumb.Current>
+        </Breadcrumb>
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">إدارة المقاولين</h1>

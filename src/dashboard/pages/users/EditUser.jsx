@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 import UserForm from "./UserForm";
 
 const API_URL = "http://localhost:3000";
@@ -24,6 +25,11 @@ export default function EditUser() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/users">المستخدمون والصلاحيات</Breadcrumb.Link>
+        <Breadcrumb.Current>تعديل المستخدم</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-2xl font-bold text-gray-800">تعديل المستخدم</h1>
       <UserForm initialData={user} onSubmit={(d) => updateUser(id, d)} submitLabel="حفظ التعديلات" />
     </div>

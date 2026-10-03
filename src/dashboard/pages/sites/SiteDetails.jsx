@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import StatusBadge from "./StatusBadge";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -53,6 +54,11 @@ export default function SiteDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/sites">المواقع</Breadcrumb.Link>
+        <Breadcrumb.Current>{site.nameAr || site.name || "تفاصيل الموقع"}</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">{site.nameAr || site.name || "موقع بدون اسم"}</h1>

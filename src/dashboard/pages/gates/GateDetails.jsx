@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge, ConnectionBadge, DIRECTION_LABEL, TYPE_LABEL, DEVICE_LABEL, formatDate } from "./GateBadges";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -61,6 +62,11 @@ export default function GateDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/gates">البوابات</Breadcrumb.Link>
+        <Breadcrumb.Current>{gate.nameAr || gate.name || "تفاصيل البوابة"}</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-800">{gate.nameAr || "بوابة"}</h1>

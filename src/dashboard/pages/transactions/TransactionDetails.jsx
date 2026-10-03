@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge, PlateBadge, txCode, tons, formatDate } from "./TransactionBadges";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -120,6 +121,11 @@ export default function TransactionDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/transactions">المعاملات</Breadcrumb.Link>
+        <Breadcrumb.Current>تفاصيل المعاملة</Breadcrumb.Current>
+      </Breadcrumb>
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">

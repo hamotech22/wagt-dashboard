@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { StatusBadge, PlateBadge, STATUS_OPTIONS, txCode, tons, formatDate, isToday } from "./TransactionBadges";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -158,6 +159,10 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Current>{title}</Breadcrumb.Current>
+      </Breadcrumb>
       <div>
         <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
         <p className="text-sm text-gray-500">{subtitle}</p>

@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import About from "../pages/About";
+import Login from "../../auth/login/Login";
 
 
 export default function WebsiteRoutes() {
@@ -8,6 +9,7 @@ export default function WebsiteRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
+      <Route path="/login" element={<Login />} />
 
       <Route path="*" element={<Home />} />
     </Routes>

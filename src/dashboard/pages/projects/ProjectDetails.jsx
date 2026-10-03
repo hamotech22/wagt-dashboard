@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -140,16 +141,13 @@ export default function ProjectDetails() {
 
   return (
     <div className="space-y-6 p-6">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/projects">المشاريع</Breadcrumb.Link>
+        <Breadcrumb.Current>{project.name}</Breadcrumb.Current>
+      </Breadcrumb>
       {/* الرأس */}
       <div>
-        <nav aria-label="مسار التنقل" className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-          <button type="button" onClick={() => navigate("/dashboard/projects")} className="hover:text-sky-600">
-            المشاريع
-          </button>
-          <span aria-hidden="true">/</span>
-          <span className="text-slate-800">{project.name}</span>
-        </nav>
-
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-xl font-bold text-slate-900">{project.name}</h1>
           <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${statuses[project.status]?.style}`}>

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { StatusBadge, ConnectionBadge, TYPE_LABEL, TYPE_ICON, formatDate } from "./DeviceBadges";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -46,6 +47,11 @@ export default function DeviceDetails() {
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/devices">الأجهزة</Breadcrumb.Link>
+        <Breadcrumb.Current>{device.nameAr || "تفاصيل الجهاز"}</Breadcrumb.Current>
+      </Breadcrumb>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{TYPE_ICON[device.type]}</span>

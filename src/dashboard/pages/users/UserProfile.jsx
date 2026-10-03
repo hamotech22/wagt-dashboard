@@ -1,13 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Send, UsersRound, Camera, BriefcaseBusiness } from "lucide-react";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 const PROFILE_USER_ID = "1";
 const TABS = ["نظرة عامة", "تعديل الملف الشخصي", "الإعدادات", "تغيير كلمة المرور"];
+const TAB_LABELS = {
+  overview: "نظرة عامة",
+  edit: "تعديل الملف الشخصي",
+  settings: "الإعدادات",
+  password: "تغيير كلمة المرور",
+};
 
 export default function UserProfile() {
-  const [activeTab, setActiveTab] = useState("نظرة عامة");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = TAB_LABELS[searchParams.get("tab")] || TAB_LABELS.overview;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -44,6 +53,11 @@ export default function UserProfile() {
     setSaveMessage("");
   };
 
+  const selectTab = (tab) => {
+    const tabKey = Object.keys(TAB_LABELS).find((key) => TAB_LABELS[key] === tab);
+    setSearchParams(tabKey === "overview" ? {} : { tab: tabKey });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -66,6 +80,10 @@ export default function UserProfile() {
   return (
     <div dir="rtl" className="min-h-screen bg-gray-100 p-6 font-sans">
       <div className="mx-auto max-w-6xl">
+        <Breadcrumb>
+          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+          <Breadcrumb.Current>الملف الشخصي</Breadcrumb.Current>
+        </Breadcrumb>
         <div className="mb-4">
           <h1 className="text-2xl font-semibold text-gray-800">الملف الشخصي</h1>
         </div>
@@ -108,7 +126,7 @@ export default function UserProfile() {
                 {TABS.map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => selectTab(tab)}
                     className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                       activeTab === tab ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"
                     }`}

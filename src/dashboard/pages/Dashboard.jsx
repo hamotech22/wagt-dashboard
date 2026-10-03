@@ -8,10 +8,14 @@ import LocationsMap from "../components/dashboard/LocationsMap";
 // import MadinatiIntegration from "../components/dashboard/MadinatiIntegration";
 import QuickReports from "../components/dashboard/QuickReports";
 import Alerts from "../components/dashboard/Alerts";
+// import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function Dashboard() {
   return (
     <div className="min-h-screen p-6" dir="rtl">
+      {/* <Breadcrumb>
+        <Breadcrumb.Current>لوحة التحكم</Breadcrumb.Current>
+      </Breadcrumb> */}
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-800">لوحة التحكم</h1>

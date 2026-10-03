@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -105,23 +105,11 @@ export default function AddProject() {
 
   return (
     <div className="p-6">
-      <nav
-        aria-label="مسار التنقل"
-        className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm shadow-sm"
-      >
-        <button
-          type="button"
-          onClick={() => navigate("/dashboard/projects")}
-          className="cursor-pointer font-medium text-slate-500 transition-colors hover:text-sky-700"
-        >
-          المشاريع
-        </button>
-        <ChevronLeft size={16} aria-hidden="true" className="text-slate-400" />
-        <span aria-current="page" className="font-semibold text-slate-800">
-          إضافة مشروع
-        </span>
-      </nav>
-
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/projects">المشاريع</Breadcrumb.Link>
+        <Breadcrumb.Current>إضافة مشروع</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-xl font-bold text-slate-900">إضافة مشروع</h1>
       <p className="mt-1 text-sm text-slate-500">أدخل بيانات المشروع واربطه بالبلدية والمقاولين. الحقول المعلَّمة بـ * مطلوبة.</p>
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
@@ -115,18 +116,11 @@ export default function EditProject() {
 
   return (
     <div className="p-6">
-      <nav aria-label="مسار التنقل" className="mb-2 flex items-center gap-2 text-sm text-slate-500">
-        <button type="button" onClick={() => navigate("/projects")} className="hover:text-sky-600">
-          المشاريع
-        </button>
-        <span aria-hidden="true">/</span>
-        <button type="button" onClick={() => navigate(`/projects/${id}`)} className="hover:text-sky-600">
-          {form.name}
-        </button>
-        <span aria-hidden="true">/</span>
-        <span className="text-slate-800">تعديل</span>
-      </nav>
-
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/projects">المشاريع</Breadcrumb.Link>
+        <Breadcrumb.Current>تعديل المشروع</Breadcrumb.Current>
+      </Breadcrumb>
       <h1 className="text-xl font-bold text-slate-900">تعديل المشروع</h1>
       <p className="mt-1 text-sm text-slate-500">عدّل بيانات المشروع ثم احفظ التغييرات.</p>
 
