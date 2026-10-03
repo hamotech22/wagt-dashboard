@@ -26,8 +26,10 @@ import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import TuneIcon from "@mui/icons-material/Tune";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import HomeIcon from "@mui/icons-material/Home";
+import profileImage from "../../../assets/images/profile.jpeg";
 
 const drawerWidth = 240;
+const mobileDrawerWidth = 180;
 const API_URL = "http://localhost:3000";
 
 // AppBar
@@ -60,6 +62,11 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
+
+  [theme.breakpoints.down("sm")]: open && {
+    marginRight: mobileDrawerWidth,
+    width: `calc(100% - ${mobileDrawerWidth}px)`,
+  },
 }));
 
 // Search
@@ -229,7 +236,7 @@ export default function Topbar({ open, handleDrawerOpen }) {
             title="قائمة المستخدم"
             onClick={(event) => setProfileAnchor(event.currentTarget)}
           >
-            <Avatar src="https://i.pravatar.cc/150?img=12" alt="الصورة الشخصية" sx={{ width: 24, height: 24 }}>
+            <Avatar src={profileImage} alt="الصورة الشخصية" sx={{ width: 24, height: 24 }}>
               <AccountCircleIcon sx={{ fontSize: 20 }} />
             </Avatar>
           </IconButton>

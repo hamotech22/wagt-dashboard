@@ -35,6 +35,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 // import HistoryIcon from "@mui/icons-material/History";
 
 const drawerWidth = 240;
+const mobileDrawerWidth = 180;
 
 // Dark navy sidebar (slate-900 -> blue-950) built on the same Tailwind blue
 // family as the rest of the app. Light text + bright blue icons on top of it.
@@ -62,6 +63,10 @@ const palette = {
 const openedMixin = (theme) => ({
   width: drawerWidth,
 
+  [theme.breakpoints.down("sm")]: {
+    width: mobileDrawerWidth,
+  },
+
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
@@ -78,7 +83,7 @@ const closedMixin = (theme) => ({
 
   overflowX: "hidden",
 
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: 44,
 
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -156,7 +161,7 @@ const itemSx = (open) => ({
   position: "relative",
   minHeight: 48,
   mx: 1,
-  px: 1.5,
+  px: { xs: 1, sm: 1.5 },
   borderRadius: 1.5, // rounded-md (6px)
   justifyContent: open ? "initial" : "center",
   color: palette.text,
@@ -181,7 +186,7 @@ const itemSx = (open) => ({
 const iconSx = (open, isActive = false) => ({
   minWidth: 0,
   justifyContent: "center",
-  ml: open ? 3 : "auto",
+  ml: open ? { xs: 0.5, sm: 3 } : "auto",
   color: isActive ? palette.iconActive : palette.icon,
   transition: "color 0.2s ease, transform 0.2s ease",
 });
@@ -395,10 +400,14 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   <ListItemText
                     primary={item.name}
                     sx={{
+                      minWidth: 0,
                       opacity: open ? 1 : 0,
                       "& .MuiListItemText-primary": {
                         fontSize: "1rem",
                         fontWeight: "inherit",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       },
                     }}
                   />
@@ -413,10 +422,14 @@ export default function Sidebar({ open, handleDrawerClose }) {
                   <ListItemText
                     primary={item.name}
                     sx={{
+                      minWidth: 0,
                       opacity: open ? 1 : 0,
                       "& .MuiListItemText-primary": {
                         fontSize: "1rem",
                         fontWeight: "inherit",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       },
                     }}
                   />
@@ -451,9 +464,14 @@ export default function Sidebar({ open, handleDrawerClose }) {
                             backgroundColor: palette.activeBg,
                             fontWeight: 600,
                           },
+                          "& .MuiListItemText-primary": {
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          },
                         }}
                       >
-                        <ListItemText primary={child.name} />
+                        <ListItemText primary={child.name} sx={{ minWidth: 0 }} />
                       </ListItemButton>
                     ))}
                   </List>

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import StatisticsCards from "../components/dashboard/StatisticsCards";
 import VehicleChart from "../components/dashboard/VehicleChart";
 import WasteChart from "../components/dashboard/WasteChart";
@@ -8,9 +10,23 @@ import LocationsMap from "../components/dashboard/LocationsMap";
 // import MadinatiIntegration from "../components/dashboard/MadinatiIntegration";
 import QuickReports from "../components/dashboard/QuickReports";
 import Alerts from "../components/dashboard/Alerts";
+import Loading from "../../components/loading/Loading";
 // import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function Dashboard() {
+  const [showRefreshLoading, setShowRefreshLoading] = useState(
+    () => window.performance.getEntriesByType("navigation")[0]?.type === "reload",
+  );
+
+  useEffect(() => {
+    if (!showRefreshLoading) return undefined;
+
+    const timeoutId = window.setTimeout(() => setShowRefreshLoading(false), 800);
+    return () => window.clearTimeout(timeoutId);
+  }, [showRefreshLoading]);
+
+  if (showRefreshLoading) return <Loading />;
+
   return (
     <div className="min-h-screen p-6" dir="rtl">
       {/* <Breadcrumb>

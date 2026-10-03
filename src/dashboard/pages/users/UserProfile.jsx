@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Send, UsersRound, Camera, BriefcaseBusiness } from "lucide-react";
 import Breadcrumb from "../../components/common/Breadcrumb";
+import profileImage from "../../../assets/images/profile.jpeg";
 
 const API_URL = "http://localhost:3000";
 const PROFILE_USER_ID = "1";
@@ -95,7 +96,7 @@ export default function UserProfile() {
           <div className="lg:w-1/3">
             <div className="rounded-lg bg-white p-6 shadow-sm">
               <div className="flex flex-col items-center pt-2 text-center">
-                <img src="https://i.pravatar.cc/150?img=12" alt="Profile" className="h-24 w-24 rounded-full object-cover" />
+                <img src={profileImage} alt="الصورة الشخصية" className="h-24 w-24 rounded-full object-cover" />
                 <h2 className="mt-3 text-lg font-semibold text-gray-800">{profile.fullName || "المستخدم"}</h2>
                 <h3 className="text-sm text-gray-500">{profile.job}</h3>
                 {(profile.twitter || profile.facebook || profile.instagram || profile.linkedin) && (
@@ -167,7 +168,7 @@ export default function UserProfile() {
               {activeTab === "تعديل الملف الشخصي" && (
                 <form className="space-y-4 pt-5" onSubmit={handleSubmit}>
                   <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-                    <img src="https://i.pravatar.cc/150?img=12" alt="Profile" className="h-16 w-16 rounded-full object-cover" />
+                    <img src={profileImage} alt="الصورة الشخصية" className="h-16 w-16 rounded-full object-cover" />
                     <div className="flex gap-2">
                       <button type="button" className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
                         رفع صورة
