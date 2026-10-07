@@ -74,7 +74,7 @@ const customStyles = {
     },
   },
   cells: { style: { justifyContent: "flex-end", paddingTop: "8px", paddingBottom: "8px" } },
-  noData: { style: { padding: "32px", color: "#94a3b8", fontSize: "0.875rem" } },
+  noData: { style: { display: "none" } },
   pagination: { style: { direction: "rtl", borderTopWidth: "1px", borderTopColor: "#f1f5f9" } },
 };
 
@@ -192,7 +192,7 @@ export default function GatesDevices() {
               paginationPerPage={5}
               paginationRowsPerPageOptions={[5, 10, 25]}
               paginationComponentOptions={paginationLabels}
-              noDataComponent="لا توجد بيانات"
+              noDataComponent={null}
               highlightOnHover
               persistTableHead
             />
