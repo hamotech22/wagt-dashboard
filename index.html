@@ -4,21 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- مضاف: عشان المتصفح يعرف إن الموقع بيدعم الدارك -->
-    <meta name="color-scheme" content="light dark" />
     <title>wagt</title>
+
     <!-- مضاف: بيطبّق الدارك قبل ما الصفحة تترسم (يمنع الوميض الأبيض) -->
     <script>
       try {
         var t = localStorage.getItem('theme') ||
           (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        if (t === 'dark') document.documentElement.classList.add('dark');
+        // مضاف: شرط إن المسار يكون داشبورد (الصفحة الرئيسية ما تتأثرش)
+        if (t === 'dark' && location.pathname.startsWith('/dashboard')) {
+          document.documentElement.classList.add('dark');
+        }
       } catch (e) {}
     </script>
-    <!-- مضاف: خلفية فورية للـ html لحد ما Tailwind يتحمّل -->
+
+    <!-- مضاف: خلفية فورية للداشبورد الغامق لحد ما الـ CSS يتحمّل -->
     <style>
-      html.dark { background: #020617; }
-      html:not(.dark) { background: #f1f5f9; }
+      html.dark, html.dark body { background: #020617; }
     </style>
   </head>
   <body class="bg-slate-100 dark:bg-slate-950">
