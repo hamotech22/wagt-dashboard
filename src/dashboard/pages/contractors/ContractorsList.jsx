@@ -137,7 +137,7 @@ export default function ContractorsList() {
           </div>
           <button
             onClick={() => navigate("/dashboard/contractors/add")}
-            className="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800"
+            className="inline-flex h-10 items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
           >
             + إضافة مقاول
           </button>
@@ -191,15 +191,26 @@ export default function ContractorsList() {
                     <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS[c.status][1]}`}>{STATUS[c.status][0]}</span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-left">
-                    <button onClick={() => navigate(`/dashboard/contractors/${c.id}`)} className="text-teal-700 hover:underline">
+                    <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => navigate(`/dashboard/contractors/${c.id}`)}
+                      className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+                    >
                       التفاصيل
                     </button>
-                    <button onClick={() => go("edit", c.id)} className="mr-4 text-teal-700 hover:underline">
+                    <button
+                      onClick={() => go("edit", c.id)}
+                      className="inline-flex h-9 items-center justify-center rounded-lg border border-sky-200 bg-sky-50 px-3 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200 dark:hover:bg-sky-900"
+                    >
                       تعديل
                     </button>
-                    <button onClick={() => setToDelete(c)} className="mr-4 text-red-600 hover:underline">
+                    <button
+                      onClick={() => setToDelete(c)}
+                      className="inline-flex h-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200 dark:hover:bg-red-900"
+                    >
                       حذف
                     </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -212,11 +223,14 @@ export default function ContractorsList() {
 
       {toDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6">
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-800">
             <h3 className="mb-2 font-bold">حذف المقاول</h3>
             <p className="text-sm text-slate-600">سيتم حذف «{toDelete.commercialName}». لا يمكن التراجع عن ذلك.</p>
             <div className="mt-6 flex justify-end gap-3">
-              <button onClick={() => setToDelete(null)} className="rounded-md border border-slate-300 px-4 py-2 text-sm">
+              <button
+                onClick={() => setToDelete(null)}
+                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+              >
                 إلغاء
               </button>
               <button
@@ -224,7 +238,7 @@ export default function ContractorsList() {
                   setItems(items.filter((c) => c.id !== toDelete.id));
                   setToDelete(null);
                 }}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+                className="inline-flex h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800"
               >
                 حذف
               </button>

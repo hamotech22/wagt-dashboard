@@ -26,7 +26,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import profileImage from "../../../assets/images/profile.jpeg";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const drawerWidth = 240;
 const mobileDrawerWidth = 180;
@@ -230,6 +233,7 @@ export default function Topbar({
   const [notificationsAnchor, setNotificationsAnchor] = useState(null);
   const [profileAnchor, setProfileAnchor] = useState(null);
   const [settingsAnchor, setSettingsAnchor] = useState(null);
+  const { darkMode, toggleTheme } = useTheme();
   const unreadCount = unreadNotifications.length;
 
   const goToProfile = () => {
@@ -319,6 +323,16 @@ export default function Topbar({
 
         {/* Right Side */}
         <Box sx={{ marginRight: "auto", display: "flex", alignItems: "center", gap: 0.5 }}>
+          <IconButton
+            aria-label={darkMode ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
+            aria-pressed={darkMode}
+            title={darkMode ? "الوضع الفاتح" : "الوضع الداكن"}
+            onClick={toggleTheme}
+            sx={topIconSx}
+          >
+            {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+
           {/* ---------------- User Profile ---------------- */}
           <IconButton
             aria-label="قائمة المستخدم"

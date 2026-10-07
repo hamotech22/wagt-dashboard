@@ -95,10 +95,16 @@ export default function EditContractor({ contractor = SAMPLE, onSave, onCancel }
           </div>
 
           <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
-            <button onClick={onCancel} className="rounded-md border border-slate-300 px-4 py-2 text-sm">
+            <button
+              onClick={onCancel}
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
               إلغاء
             </button>
-            <button onClick={submit} className="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+            <button
+              onClick={submit}
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
+            >
               حفظ التعديلات
             </button>
           </div>

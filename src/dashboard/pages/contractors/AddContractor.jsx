@@ -174,7 +174,7 @@ export default function AddContractor() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
                 >
                   {saving ? "جارٍ الحفظ..." : "حفظ المقاول"}
                 </button>
@@ -182,7 +182,7 @@ export default function AddContractor() {
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard/contractors")}
-                  className="w-full border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
+                  className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   إلغاء
                 </button>

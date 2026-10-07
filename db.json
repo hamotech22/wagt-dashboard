@@ -216,6 +216,76 @@
       "time": "08:20 ص",
       "status": "مكتملة",
       "id": "FStzU2-1syc"
+    },
+    {
+      "vehicle": "KSA-2468",
+      "contractor": "المقاول الثاني",
+      "project": "مشروع نجران",
+      "location": "مردم نجران",
+      "weight": 8.4,
+      "time": "08:05 ص",
+      "status": "مكتملة",
+      "id": "sample-operation-6"
+    },
+    {
+      "vehicle": "KSA-1357",
+      "contractor": "المقاول الثالث",
+      "project": "مشروع نجران",
+      "location": "نفايات بناء وهدم",
+      "weight": 10.1,
+      "time": "07:42 ص",
+      "status": "معلقة",
+      "id": "sample-operation-7"
+    },
+    {
+      "vehicle": "KSA-8642",
+      "contractor": "المقاول الخامس",
+      "project": "مشروع نجران",
+      "location": "منطقة الميزان",
+      "weight": 7.6,
+      "time": "07:25 ص",
+      "status": "مكتملة",
+      "id": "sample-operation-8"
+    },
+    {
+      "vehicle": "KSA-9753",
+      "contractor": "المقاول الأول",
+      "project": "مشروع نجران",
+      "location": "الموقع 2",
+      "weight": 0,
+      "time": "07:10 ص",
+      "status": "قيد التنفيذ",
+      "id": "sample-operation-9"
+    },
+    {
+      "vehicle": "KSA-4826",
+      "contractor": "المقاول الرابع",
+      "project": "مشروع نجران",
+      "location": "مردم نجران",
+      "weight": 9.2,
+      "time": "06:55 ص",
+      "status": "مكتملة",
+      "id": "sample-operation-10"
+    },
+    {
+      "vehicle": "KSA-3579",
+      "contractor": "المقاول الثاني",
+      "project": "مشروع نجران",
+      "location": "البوابة الشمالية",
+      "weight": 0,
+      "time": "06:40 ص",
+      "status": "معلقة",
+      "id": "sample-operation-11"
+    },
+    {
+      "vehicle": "KSA-6248",
+      "contractor": "المقاول الثالث",
+      "project": "مشروع نجران",
+      "location": "نفايات منزلية",
+      "weight": 11.7,
+      "time": "06:20 ص",
+      "status": "مكتملة",
+      "id": "sample-operation-12"
     }
   ],
   "reports": [
@@ -272,9 +342,73 @@
       "location": "الموقع 2",
       "online": false,
       "status": "غير متصل"
+    },
+    {
+      "id": "5",
+      "type": "gate",
+      "name": "البوابة الشرقية",
+      "location": "المدخل الشرقي",
+      "online": true,
+      "status": "عاملة"
+    },
+    {
+      "id": "6",
+      "type": "device",
+      "name": "جهاز قراءة اللوحات",
+      "location": "البوابة الشمالية",
+      "online": false,
+      "status": "غير متصل"
+    },
+    {
+      "id": "7",
+      "type": "gate",
+      "name": "البوابة الغربية",
+      "location": "المدخل الغربي",
+      "online": true,
+      "status": "عاملة"
+    },
+    {
+      "id": "8",
+      "type": "device",
+      "name": "جهاز الوزن 3",
+      "location": "منطقة الميزان",
+      "online": true,
+      "status": "متصل"
+    },
+    {
+      "id": "9",
+      "type": "gate",
+      "name": "بوابة منطقة التفريغ",
+      "location": "منطقة التفريغ",
+      "online": false,
+      "status": "متوقفة"
+    },
+    {
+      "id": "10",
+      "type": "device",
+      "name": "قارئ اللوحات 2",
+      "location": "البوابة الشرقية",
+      "online": true,
+      "status": "متصل"
+    },
+    {
+      "id": "11",
+      "type": "gate",
+      "name": "بوابة المردم",
+      "location": "مردم نجران",
+      "online": true,
+      "status": "عاملة"
+    },
+    {
+      "id": "12",
+      "type": "device",
+      "name": "جهاز الوزن 4",
+      "location": "الموقع 3",
+      "online": false,
+      "status": "غير متصل"
     }
   ],
-  "alerts": [
+   "alerts": [
     {
       "title": "انخفاض مستوى الاتصال بجهاز الوزن في الموقع 2",
       "time": "منذ 15 دقيقة",
@@ -298,6 +432,60 @@
       "time": "منذ 3 ساعات",
       "type": "success",
       "id": "qV3macCVOeY"
+    },
+    {
+      "title": "فشل في قراءة بيانات البوابة الرئيسية",
+      "time": "منذ 4 ساعات",
+      "type": "error",
+      "id": "aB3dE5fGh7J"
+    },
+    {
+      "title": "محاولة دخول متكررة برقم مركبة غير مسجل",
+      "time": "منذ 5 ساعات",
+      "type": "warning",
+      "id": "kL9mN2pQr4S"
+    },
+    {
+      "title": "تم تحديث إعدادات النظام بنجاح",
+      "time": "منذ 6 ساعات",
+      "type": "info",
+      "id": "tU6vW8xYz1A"
+    },
+    {
+      "title": "تمت مزامنة بيانات العمليات مع الخادم",
+      "time": "منذ 8 ساعات",
+      "type": "success",
+      "id": "bC4dE7fGh0I"
+    },
+    {
+      "title": "توقف جهاز قراءة اللوحات في البوابة 3",
+      "time": "منذ 10 ساعات",
+      "type": "error",
+      "id": "jK2lM5nOp8Q"
+    },
+    {
+      "title": "ارتفاع عدد المركبات المنتظرة عند البوابة الشمالية",
+      "time": "منذ 12 ساعة",
+      "type": "warning",
+      "id": "rS1tU3vWx6Y"
+    },
+    {
+      "title": "تم إنشاء نسخة احتياطية من البيانات",
+      "time": "منذ يوم",
+      "type": "info",
+      "id": "zA9bC2dE5fG"
+    },
+    {
+      "title": "تمت معايرة جهاز الوزن بنجاح",
+      "time": "منذ يوم",
+      "type": "success",
+      "id": "hI7jK0lM3nO"
+    },
+    {
+      "title": "انقطاع مؤقت في الاتصال بمنصة مدينتي",
+      "time": "منذ يومين",
+      "type": "error",
+      "id": "pQ5rS8tU1vW"
     }
   ],
   "municipalities": [

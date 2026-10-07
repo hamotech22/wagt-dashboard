@@ -64,7 +64,12 @@ export default function LocationsMap() {
       </div>
 
       <div className="relative h-64 overflow-hidden rounded-lg border border-slate-200">
-        <MapContainer center={DEFAULT_CENTER} zoom={5} scrollWheelZoom className="h-full w-full">
+        <MapContainer
+          center={DEFAULT_CENTER}
+          zoom={5}
+          scrollWheelZoom
+          className="locations-map-canvas h-full w-full"
+        >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -93,7 +98,7 @@ export default function LocationsMap() {
           ))}
         </MapContainer>
         {(loading || error || sitesWithCoordinates.length === 0) && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-white/90 px-3 py-2 text-center text-xs text-slate-600">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-white/90 px-3 py-2 text-center text-xs text-slate-600 dark:bg-slate-800/90 dark:text-slate-300">
             {loading && "جارِ تحميل المواقع..."}
             {error && <span role="alert" className="text-red-600">تعذّر تحميل بيانات المواقع.</span>}
             {!loading && !error && sitesWithCoordinates.length === 0 && "لا توجد إحداثيات للمواقع لعرضها."}

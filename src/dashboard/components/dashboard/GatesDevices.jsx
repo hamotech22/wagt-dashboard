@@ -8,6 +8,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import SearchIcon from "@mui/icons-material/Search";
 
 import DataTable from "react-data-table-component";
+import DashboardPagination from "./DashboardPagination";
 
 const TYPE_LABELS = { gate: "بوابة", device: "جهاز" };
 
@@ -18,10 +19,10 @@ const columns = [
     sortable: true,
     cell: (row) => (
       <div className="flex items-center gap-2">
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
           {row.type === "gate" ? <DoorFrontIcon sx={{ fontSize: 15 }} /> : <DevicesIcon sx={{ fontSize: 15 }} />}
         </div>
-        <span className="truncate font-medium text-slate-600">{row.name}</span>
+        <span className="truncate font-medium text-slate-600 dark:text-slate-300">{row.name}</span>
       </div>
     ),
   },
@@ -34,7 +35,7 @@ const columns = [
     name: "الموقع",
     selector: (row) => row.location,
     sortable: true,
-    cell: (row) => <span className="truncate text-sm text-slate-500">{row.location}</span>,
+    cell: (row) => <span className="truncate text-sm text-slate-500 dark:text-slate-400">{row.location}</span>,
   },
   {
     name: "الحالة",
@@ -74,7 +75,7 @@ const customStyles = {
     },
   },
   cells: { style: { justifyContent: "flex-end", paddingTop: "8px", paddingBottom: "8px" } },
-  noData: { style: { display: "none" } },
+  noData: { style: { padding: 0, backgroundColor: "transparent", color: "#94a3b8", fontSize: "0.875rem" } },
   pagination: { style: { direction: "rtl", borderTopWidth: "1px", borderTopColor: "#f1f5f9" } },
 };
 
@@ -114,54 +115,54 @@ export default function GatesDevices() {
   }, [items, filterText]);
 
   return (
-    <div className="h-full w-full rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4" dir="rtl">
+    <div className="h-full w-full rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4 dark:border-slate-700 dark:bg-slate-800" dir="rtl">
       {/* Header */}
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-slate-800">حالة البوابات والأجهزة</h2>
+        <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">حالة البوابات والأجهزة</h2>
       </div>
 
       {/* Summary Cards */}
       <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <div className="min-w-0 rounded-lg border border-slate-100 bg-white p-3">
+        <div className="min-w-0 rounded-lg border border-slate-100 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
               <DoorFrontIcon sx={{ fontSize: 19 }} />
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm text-slate-400">البوابات</p>
-              <p className="text-lg font-bold text-slate-800">{gates.length}</p>
+              <p className="truncate text-sm text-slate-400 dark:text-slate-400">البوابات</p>
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{gates.length}</p>
             </div>
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm">
-            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500">
+            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500 dark:text-slate-400">
               <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               {gatesOnline} عاملة
             </span>
-            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500">
+            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500 dark:text-slate-400">
               <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
               {gatesOffline} متوقفة
             </span>
           </div>
         </div>
 
-        <div className="min-w-0 rounded-lg border border-slate-100 bg-white p-3">
+        <div className="min-w-0 rounded-lg border border-slate-100 bg-white p-3 dark:border-slate-700 dark:bg-slate-900/50">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
               <DevicesIcon sx={{ fontSize: 19 }} />
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm text-slate-400">الأجهزة</p>
-              <p className="text-lg font-bold text-slate-800">{devices.length}</p>
+              <p className="truncate text-sm text-slate-400 dark:text-slate-400">الأجهزة</p>
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{devices.length}</p>
             </div>
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-sm">
-            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500">
+            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500 dark:text-slate-400">
               <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               {devicesOnline} متصلة
             </span>
-            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500">
+            <span className="flex items-center gap-1 whitespace-nowrap text-slate-500 dark:text-slate-400">
               <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
               {devicesOffline} غير متصلة
             </span>
@@ -176,12 +177,12 @@ export default function GatesDevices() {
           value={filterText}
           onChange={(e) => setFilterText(e.target.value)}
           placeholder="بحث..."
-          className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pr-9 pl-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white"
+          className="w-full rounded-lg border border-slate-200 bg-slate-50 py-1.5 pr-9 pl-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:focus:bg-slate-900"
         />
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-lg border border-slate-100">
+      <div className="overflow-hidden rounded-lg border border-slate-100 dark:border-slate-700">
         <div className="overflow-x-auto">
           <div className="min-w-[480px]">
             <DataTable
@@ -189,10 +190,15 @@ export default function GatesDevices() {
               data={filteredItems}
               customStyles={customStyles}
               pagination
+              paginationComponent={DashboardPagination}
               paginationPerPage={5}
               paginationRowsPerPageOptions={[5, 10, 25]}
               paginationComponentOptions={paginationLabels}
-              noDataComponent={null}
+              noDataComponent={
+                <div className="w-full bg-white py-8 text-center text-sm text-slate-400 dark:bg-slate-800 dark:text-slate-300">
+                  لا توجد بيانات
+                </div>
+              }
               highlightOnHover
               persistTableHead
             />

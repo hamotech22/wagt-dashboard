@@ -203,7 +203,7 @@ export default function AddOrganization() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                  className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-400 dark:focus-visible:ring-offset-slate-900"
                 >
                   {saving ? "جارٍ الحفظ..." : "حفظ الجهة"}
                 </button>
@@ -211,7 +211,7 @@ export default function AddOrganization() {
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard/organizations")}
-                  className="w-full border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
+                  className="w-full rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   إلغاء
                 </button>

@@ -5,59 +5,92 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import SearchIcon from "@mui/icons-material/Search";
 
 import DataTable from "react-data-table-component";
+import DashboardPagination from "./DashboardPagination";
 
 const STATUS_STYLES = {
-  مكتملة: "bg-emerald-100 text-emerald-600",
-  معلقة: "bg-amber-100 text-amber-600",
-  "قيد التنفيذ": "bg-blue-100 text-blue-600",
+  مكتملة: {
+    badge:
+      "bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:ring-emerald-500/20",
+    dot: "bg-emerald-500",
+  },
+  معلقة: {
+    badge:
+      "bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20",
+    dot: "bg-amber-500",
+  },
+  "قيد التنفيذ": {
+    badge:
+      "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20",
+    dot: "bg-blue-500",
+    pulse: true,
+  },
 };
 
-const statusClass = (status) => STATUS_STYLES[status] ?? "bg-red-100 text-red-600";
+const DEFAULT_STATUS = {
+  badge:
+    "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-400 dark:ring-red-500/20",
+  dot: "bg-red-500",
+};
+
+const getStatusStyle = (status) => STATUS_STYLES[status] ?? DEFAULT_STATUS;
 
 const columns = [
   {
     name: "رقم المركبة",
     selector: (row) => row.vehicle,
     sortable: true,
-    cell: (row) => <span className="font-semibold text-slate-700">{row.vehicle}</span>,
+    cell: (row) =>     <span className="font-semibold text-slate-700 dark:text-slate-200">{row.vehicle}</span>,
   },
   {
     name: "المقاول",
     selector: (row) => row.contractor,
     sortable: true,
-    cell: (row) => <span className="text-sm text-slate-600">{row.contractor}</span>,
+    cell: (row) =>     <span className="text-sm text-slate-600 dark:text-slate-300">{row.contractor}</span>,
   },
   {
     name: "المشروع",
     selector: (row) => row.project,
     sortable: true,
-    cell: (row) => <span className="text-sm text-slate-600">{row.project}</span>,
+    cell: (row) =>     <span className="text-sm text-slate-600 dark:text-slate-300">{row.project}</span>,
   },
   {
     name: "الموقع",
     selector: (row) => row.location,
     sortable: true,
-    cell: (row) => <span className="text-sm text-slate-600">{row.location}</span>,
+    cell: (row) =>     <span className="text-sm text-slate-600 dark:text-slate-300">{row.location}</span>,
   },
   {
     name: "الوزن",
     selector: (row) => row.weight,
     sortable: true,
-    cell: (row) => <span className="text-sm font-semibold text-slate-700">{row.weight} طن</span>,
+    cell: (row) =>     <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{row.weight} طن</span>,
   },
   {
     name: "الوقت",
     selector: (row) => row.time,
     sortable: true,
-    cell: (row) => <span className="text-sm text-slate-500">{row.time}</span>,
+    cell: (row) =>     <span className="text-sm text-slate-500 dark:text-slate-400">{row.time}</span>,
   },
   {
     name: "الحالة",
     selector: (row) => row.status,
     sortable: true,
-    cell: (row) => (
-      <span className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${statusClass(row.status)}`}>{row.status}</span>
-    ),
+    cell: (row) => {
+      const style = getStatusStyle(row.status);
+      return (
+        <span
+          className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${style.badge}`}
+        >
+          <span className="relative flex h-2 w-2">
+            {style.pulse && (
+              <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${style.dot}`} />
+            )}
+            <span className={`relative inline-flex h-2 w-2 rounded-full ${style.dot}`} />
+          </span>
+          {row.status}
+        </span>
+      );
+    },
   },
 ];
 
@@ -86,7 +119,7 @@ const customStyles = {
     },
   },
   cells: { style: { justifyContent: "flex-end", paddingTop: "8px", paddingBottom: "8px" } },
-  noData: { style: { padding: "32px", color: "#94a3b8", fontSize: "0.875rem" } },
+  noData: { style: { padding: 0, backgroundColor: "transparent", color: "#94a3b8", fontSize: "0.875rem" } },
   pagination: { style: { direction: "rtl", borderTopWidth: "1px", borderTopColor: "#f1f5f9" } },
 };
 
@@ -119,17 +152,17 @@ export default function RecentOperations() {
   }, [operations, filterText]);
 
   return (
-    <div className="h-full w-full rounded-xl border border-slate-200 bg-white shadow-sm" dir="rtl">
+    <div className="h-full w-full rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800" dir="rtl">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-700">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
             <DirectionsCarIcon />
           </div>
 
           <div>
-            <h2 className="font-bold text-slate-800">أحدث العمليات</h2>
-            <p className="mt-1 text-sm text-slate-400">آخر العمليات المسجلة</p>
+            <h2 className="font-bold text-slate-800 dark:text-slate-100">أحدث العمليات</h2>
+            <p className="mt-1 text-sm text-slate-400 dark:text-slate-400">آخر العمليات المسجلة</p>
           </div>
         </div>
       </div>
@@ -142,7 +175,7 @@ export default function RecentOperations() {
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             placeholder="بحث..."
-            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pr-9 pl-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white"
+            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pr-9 pl-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white dark:border-slate-600 dark:bg-slate-900 dark:text-slate-200 dark:focus:bg-slate-900"
           />
         </div>
       </div>
@@ -154,10 +187,15 @@ export default function RecentOperations() {
           data={filteredOperations}
           customStyles={customStyles}
           pagination
+          paginationComponent={DashboardPagination}
           paginationPerPage={5}
           paginationRowsPerPageOptions={[5, 10, 25]}
           paginationComponentOptions={paginationLabels}
-          noDataComponent="لا توجد نتائج مطابقة"
+          noDataComponent={
+            <div className="w-full bg-white py-8 text-center text-sm text-slate-400 dark:bg-slate-800 dark:text-slate-300">
+              لا توجد نتائج مطابقة
+            </div>
+          }
           highlightOnHover
           persistTableHead
         />

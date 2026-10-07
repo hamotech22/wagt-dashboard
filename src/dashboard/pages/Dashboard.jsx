@@ -11,16 +11,20 @@ import Alerts from "../components/dashboard/Alerts";
 // import Breadcrumb from "../components/common/Breadcrumb";
 
 export default function Dashboard() {
+
+
   return (
-    <div className="min-h-screen p-6" dir="rtl">
+    <div className="min-h-screen bg-slate-100 p-6 dark:bg-slate-950" dir="rtl">
       {/* <Breadcrumb>
         <Breadcrumb.Current>لوحة التحكم</Breadcrumb.Current>
       </Breadcrumb> */}
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">لوحة التحكم</h1>
-
-        <p className="mt-1 text-sm text-slate-500">نظرة عامة على أداء النظام والعمليات الجارية</p>
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">لوحة التحكم</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">نظرة عامة على أداء النظام والعمليات الجارية</p>
+        </div>
+      
       </div>
 
       {/* Statistics */}

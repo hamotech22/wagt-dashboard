@@ -6,14 +6,14 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 const API_URL = "http://localhost:3000";
 
 const statuses = {
-  active: { label: "نشطة", style: "bg-emerald-100 text-emerald-700" },
-  inactive: { label: "غير نشطة", style: "bg-amber-100 text-amber-700" },
+  active: { label: "نشطة", style: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-200" },
+  inactive: { label: "غير نشطة", style: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-200" },
 };
 
 const projectStatuses = {
-  active: { label: "نشط", style: "bg-emerald-100 text-emerald-700" },
-  pending: { label: "قيد التنفيذ", style: "bg-amber-100 text-amber-700" },
-  completed: { label: "مكتمل", style: "bg-sky-100 text-sky-700" },
+  active: { label: "نشط", style: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-200" },
+  pending: { label: "قيد التنفيذ", style: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-200" },
+  completed: { label: "مكتمل", style: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-200" },
 };
 
 const organizationsApi = {
@@ -116,10 +116,10 @@ export default function OrganizationDetails() {
   const ltrLabels = ["النطاق الفرعي", "الرمز", "كود البلدية في مدينتي", "البريد الإلكتروني", "رقم الهاتف", "الموقع الإلكتروني"];
 
   const cards = [
-    ["البلديات الفرعية", subs.length, "bg-sky-50 text-sky-700"],
-    ["عدد المشاريع", projects.length, "bg-emerald-50 text-emerald-700"],
-    ["مشاريع نشطة", activeProjects, "bg-blue-50 text-blue-700"],
-    ["مشاريع مكتملة", completedProjects, "bg-amber-50 text-amber-700"],
+    ["البلديات الفرعية", subs.length],
+    ["عدد المشاريع", projects.length],
+    ["مشاريع نشطة", activeProjects],
+    ["مشاريع مكتملة", completedProjects],
   ];
 
   return (
@@ -147,7 +147,7 @@ export default function OrganizationDetails() {
           <button
             type="button"
             onClick={() => navigate(`/dashboard/organizations/edit/${id}`)}
-            className="h-10 rounded-lg bg-sky-600 px-4 text-sm font-medium text-white hover:bg-sky-500"
+            className="h-10 rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
           >
             تعديل
           </button>
@@ -156,10 +156,13 @@ export default function OrganizationDetails() {
 
       {/* البطاقات */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {cards.map(([label, value, tone]) => (
-          <div key={label} className={`rounded-xl border border-slate-200 p-4 ${tone}`}>
-            <p className="text-sm">{label}</p>
-            <p className="mt-3 text-3xl font-bold">{value}</p>
+        {cards.map(([label, value]) => (
+          <div
+            key={label}
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+          >
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</p>
+            <p className="mt-3 text-3xl font-bold tracking-tight text-blue-900 dark:text-sky-200">{value}</p>
           </div>
         ))}
       </div>
@@ -174,8 +177,10 @@ export default function OrganizationDetails() {
               role="tab"
               aria-selected={tab === t.key}
               onClick={() => setTab(t.key)}
-              className={`-mb-px border-b-2 px-4 py-3 text-sm font-medium ${
-                tab === t.key ? "border-sky-600 text-sky-700" : "border-transparent text-slate-500 hover:text-slate-800"
+              className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${
+                tab === t.key
+                  ? "border-sky-600 text-sky-700 dark:text-sky-300"
+                  : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
               }`}
             >
               {t.label}
@@ -286,7 +291,7 @@ export default function OrganizationDetails() {
                       <button
                         type="button"
                         onClick={() => navigate(`/dashboard/projects/${p.id}`)}
-                        className="rounded-md border border-slate-200 px-2 py-1 text-xs hover:bg-slate-50"
+                        className="min-h-9 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                       >
                         عرض
                       </button>

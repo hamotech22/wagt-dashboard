@@ -192,14 +192,14 @@ export default function EditOrganization() {
             type="button"
             onClick={() => navigate(`/dashboard/organizations/${id}`)}
             disabled={saving}
-            className="h-10 rounded-lg border border-slate-300 px-4 text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="h-10 rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
           >
             إلغاء
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="h-10 rounded-lg bg-sky-600 px-6 text-sm font-medium text-white hover:bg-sky-500 disabled:opacity-60"
+            className="h-10 rounded-lg bg-sky-600 px-6 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
           >
             {saving ? "جارٍ الحفظ..." : "حفظ التغييرات"}
           </button>

@@ -6,9 +6,9 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 const API_URL = "http://localhost:3000";
 
 const statuses = {
-  all: { label: "الكل", style: "bg-slate-100 text-slate-700" },
-  active: { label: "نشطة", style: "bg-emerald-100 text-emerald-700" },
-  inactive: { label: "غير نشطة", style: "bg-amber-100 text-amber-700" },
+  all: { label: "الكل", style: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200" },
+  active: { label: "نشطة", style: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-200" },
+  inactive: { label: "غير نشطة", style: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-200" },
 };
 
 const organizationsApi = {
@@ -116,14 +116,17 @@ export default function OrganizationsList() {
       {/* البطاقات */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[
-          ["إجمالي الجهات", organizations.length, "bg-sky-50 text-sky-700"],
-          ["نشطة", organizations.filter((o) => o.status === "active").length, "bg-emerald-50 text-emerald-700"],
-          ["غير نشطة", organizations.filter((o) => o.status === "inactive").length, "bg-amber-50 text-amber-700"],
-          ["إجمالي المشاريع", organizations.reduce((sum, o) => sum + o.projectsCount, 0), "bg-blue-50 text-blue-700"],
-        ].map(([label, value, tone]) => (
-          <div key={label} className={`rounded-xl border border-slate-200 p-4 ${tone}`}>
-            <p className="text-sm">{label}</p>
-            <p className="mt-3 text-3xl font-bold">{value}</p>
+          ["إجمالي الجهات", organizations.length],
+          ["نشطة", organizations.filter((o) => o.status === "active").length],
+          ["غير نشطة", organizations.filter((o) => o.status === "inactive").length],
+          ["إجمالي المشاريع", organizations.reduce((sum, o) => sum + o.projectsCount, 0)],
+        ].map(([label, value]) => (
+          <div
+            key={label}
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+          >
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{label}</p>
+            <p className="mt-3 text-3xl font-bold tracking-tight text-blue-900 dark:text-sky-200">{value}</p>
           </div>
         ))}
       </div>
@@ -164,7 +167,7 @@ export default function OrganizationsList() {
           <button
             type="button"
             onClick={() => navigate("/dashboard/organizations/add")}
-            className="h-10 rounded-lg bg-sky-600 px-4 text-sm font-medium text-white hover:bg-sky-500"
+            className="h-10 rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
           >
             + إضافة جهة
           </button>
@@ -187,7 +190,7 @@ export default function OrganizationsList() {
             <button
               type="button"
               onClick={reload}
-              className="h-10 rounded-lg border border-slate-300 px-4 text-sm text-slate-700 hover:bg-slate-50"
+              className="h-10 rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
             >
               إعادة المحاولة
             </button>
@@ -255,21 +258,21 @@ export default function OrganizationsList() {
                           <button
                             type="button"
                             onClick={() => navigate(`/dashboard/organizations/${o.id}`)}
-                            className="rounded-md border border-slate-200 px-2 py-1 text-xs hover:bg-slate-50"
+                            className="min-h-9 rounded-lg border border-slate-200 px-3 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                           >
                             عرض
                           </button>
                           <button
                             type="button"
                             onClick={() => navigate(`/dashboard/organizations/edit/${o.id}`)}
-                            className="rounded-md border border-sky-200 bg-sky-50 px-2 py-1 text-xs text-sky-700 hover:bg-sky-100"
+                            className="min-h-9 rounded-lg border border-sky-200 bg-sky-50 px-3 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200 dark:hover:bg-sky-900"
                           >
                             تعديل
                           </button>
                           <button
                             type="button"
                             onClick={() => setToDelete(o)}
-                            className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-700 hover:bg-red-100"
+                            className="min-h-9 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200 dark:hover:bg-red-900"
                           >
                             حذف
                           </button>
@@ -291,7 +294,7 @@ export default function OrganizationsList() {
                   type="button"
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="h-9 rounded-lg border border-slate-200 px-3 disabled:cursor-not-allowed disabled:text-slate-300"
+                  className="h-9 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   السابق
                 </button>
@@ -299,7 +302,7 @@ export default function OrganizationsList() {
                   type="button"
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="h-9 rounded-lg border border-slate-200 px-3 disabled:cursor-not-allowed disabled:text-slate-300"
+                  className="h-9 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   التالي
                 </button>
@@ -319,7 +322,7 @@ export default function OrganizationsList() {
               <button
                 type="button"
                 onClick={() => setToDelete(null)}
-                className="h-10 rounded-lg border border-slate-200 px-4 text-sm text-slate-700"
+                className="h-10 rounded-lg border border-slate-200 px-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
               >
                 إلغاء
               </button>
@@ -327,7 +330,7 @@ export default function OrganizationsList() {
                 type="button"
                 disabled={busy}
                 onClick={handleDelete}
-                className="h-10 rounded-lg bg-red-600 px-4 text-sm font-medium text-white disabled:opacity-60"
+                className="h-10 rounded-lg bg-red-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:focus-visible:ring-offset-slate-900"
               >
                 {busy ? "جارٍ الحذف..." : "حذف الجهة"}
               </button>
