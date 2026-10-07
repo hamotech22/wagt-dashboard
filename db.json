@@ -1432,7 +1432,16 @@
         "reports"
       ],
       "lastLogin": "2026-09-20T07:30:00",
-      "createdAt": "2026-03-01"
+      "createdAt": "2026-03-01",
+      "about": "full stack web",
+      "company": "",
+      "job": "",
+      "country": "",
+      "address": "15 giza asdarsf asfawrav adae",
+      "twitter": "",
+      "facebook": "",
+      "instagram": "",
+      "linkedin": ""
     },
     {
       "id": "2",

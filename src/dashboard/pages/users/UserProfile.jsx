@@ -76,35 +76,35 @@ export default function UserProfile() {
     }
   };
 
-  if (loading) return <div dir="rtl" className="p-6 text-gray-500">جارِ تحميل بيانات الملف الشخصي...</div>;
+  if (loading) return <div dir="rtl" className="p-6 text-gray-500 dark:text-gray-400">جارِ تحميل بيانات الملف الشخصي...</div>;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gray-100 p-6 font-sans">
+    <div dir="rtl" className="min-h-screen bg-gray-100 p-6 font-sans dark:bg-transparent">
       <div className="mx-auto max-w-6xl">
         <Breadcrumb>
           <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
           <Breadcrumb.Current>الملف الشخصي</Breadcrumb.Current>
         </Breadcrumb>
         <div className="mb-4">
-          <h1 className="text-2xl font-semibold text-gray-800">الملف الشخصي</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">الملف الشخصي</h1>
         </div>
 
-        {error && <div role="alert" className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+        {error && <div role="alert" className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/50 dark:text-red-200">{error}</div>}
 
         <div className="flex flex-col gap-6 lg:flex-row">
           {/* Left card */}
           <div className="lg:w-1/3">
-            <div className="rounded-lg bg-white p-6 shadow-sm">
+            <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-slate-800 dark:ring-1 dark:ring-slate-700">
               <div className="flex flex-col items-center pt-2 text-center">
                 <img src={profileImage} alt="الصورة الشخصية" className="h-24 w-24 rounded-full object-cover" />
-                <h2 className="mt-3 text-lg font-semibold text-gray-800">{profile.fullName || "المستخدم"}</h2>
-                <h3 className="text-sm text-gray-500">{profile.job}</h3>
+                <h2 className="mt-3 text-lg font-semibold text-gray-800 dark:text-gray-100">{profile.fullName || "المستخدم"}</h2>
+                <h3 className="text-sm text-gray-500 dark:text-gray-400">{profile.job}</h3>
                 {(profile.twitter || profile.facebook || profile.instagram || profile.linkedin) && (
                   <div className="mt-3 flex gap-3">
                     <a href={profile.twitter} aria-label="تويتر" className="text-sky-500 hover:text-sky-600">
                       <Send size={18} />
                     </a>
-                    <a href={profile.facebook} aria-label="فيسبوك" className="text-blue-700 hover:text-blue-800">
+                    <a href={profile.facebook} aria-label="فيسبوك" className="text-blue-700 hover:text-blue-800 dark:text-blue-400">
                       <UsersRound size={18} />
                     </a>
                     <a href={profile.instagram} aria-label="إنستغرام" className="text-pink-500 hover:text-pink-600">
@@ -121,15 +121,15 @@ export default function UserProfile() {
 
           {/* Right card */}
           <div className="lg:w-2/3">
-            <div className="rounded-lg bg-white p-6 shadow-sm">
+            <div className="rounded-xl bg-white p-6 shadow-sm dark:bg-slate-800 dark:ring-1 dark:ring-slate-700">
               {/* Tabs */}
-              <div className="flex flex-wrap gap-1 border-b border-gray-200">
+              <div className="flex flex-wrap gap-1 border-b border-gray-200 dark:border-slate-700">
                 {TABS.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => selectTab(tab)}
                     className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                      activeTab === tab ? "border-blue-600 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"
+                      activeTab === tab ? "border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
                     }`}
                   >
                     {tab}
@@ -140,11 +140,11 @@ export default function UserProfile() {
               {/* Overview */}
               {activeTab === "نظرة عامة" && (
                 <div className="pt-5">
-                  <h5 className="font-semibold text-gray-800">نبذة</h5>
-                  <p className="mt-1 text-sm italic text-gray-500">{profile.about || "لا توجد نبذة مسجلة."}</p>
+                  <h5 className="font-semibold text-gray-800 dark:text-gray-100">نبذة</h5>
+                  <p className="mt-1 text-sm italic text-gray-500 dark:text-gray-400">{profile.about || "لا توجد نبذة مسجلة."}</p>
 
-                  <h5 className="mt-5 font-semibold text-gray-800">تفاصيل الملف الشخصي</h5>
-                  <div className="mt-2 divide-y divide-gray-100">
+                  <h5 className="mt-5 font-semibold text-gray-800 dark:text-gray-100">تفاصيل الملف الشخصي</h5>
+                  <div className="mt-2 divide-y divide-gray-100 dark:divide-slate-700">
                     {[
                       ["الاسم الكامل", profile.fullName],
                       ["اسم المستخدم", profile.username],
@@ -156,8 +156,8 @@ export default function UserProfile() {
                       .filter(([, value]) => value)
                       .map(([label, value]) => (
                         <div key={label} className="grid grid-cols-3 gap-4 py-2 text-sm">
-                          <div className="text-gray-500">{label}</div>
-                          <div className="col-span-2 text-gray-800">{value}</div>
+                          <div className="text-gray-500 dark:text-gray-400">{label}</div>
+                          <div className="col-span-2 text-gray-800 dark:text-gray-100">{value}</div>
                         </div>
                       ))}
                   </div>
@@ -170,10 +170,10 @@ export default function UserProfile() {
                   <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                     <img src={profileImage} alt="الصورة الشخصية" className="h-16 w-16 rounded-full object-cover" />
                     <div className="flex gap-2">
-                      <button type="button" className="rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
+                      <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         رفع صورة
                       </button>
-                      <button type="button" className="rounded bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                      <button type="button" className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         إزالة
                       </button>
                     </div>
@@ -193,32 +193,32 @@ export default function UserProfile() {
                     { label: "حساب لينكدإن", name: "linkedin" },
                   ].map(({ label, name }) => (
                     <div key={name} className="grid grid-cols-1 gap-2 sm:grid-cols-4 sm:items-center">
-                      <label className="text-sm text-gray-600">{label}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
                       <input
                         name={name}
                         value={profile[name]}
                         onChange={handleChange}
-                        className="sm:col-span-3 rounded border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                        className="sm:col-span-3 rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100"
                       />
                     </div>
                   ))}
 
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-4 sm:items-start">
-                    <label className="text-sm text-gray-600">نبذة</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">نبذة</label>
                     <textarea
                       name="about"
                       value={profile.about}
                       onChange={handleChange}
                       rows={3}
-                      className="sm:col-span-3 rounded border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                      className="sm:col-span-3 rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100"
                     />
                   </div>
 
                   <div className="pt-2 text-center">
-                    <button type="submit" disabled={saving} className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
+                    <button type="submit" disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60">
                       {saving ? "جارِ الحفظ..." : "حفظ التغييرات"}
                     </button>
-                    {saveMessage && <p role="status" className="mt-2 text-sm text-green-700">{saveMessage}</p>}
+                    {saveMessage && <p role="status" className="mt-2 text-sm text-green-700 dark:text-green-400">{saveMessage}</p>}
                   </div>
                 </form>
               )}
@@ -226,7 +226,7 @@ export default function UserProfile() {
               {/* Settings */}
               {activeTab === "الإعدادات" && (
                 <form className="pt-5">
-                  <p className="mb-2 text-sm font-medium text-gray-700">إشعارات البريد الإلكتروني</p>
+                  <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">إشعارات البريد الإلكتروني</p>
                   <div className="space-y-2">
                     {[
                       { label: "التغييرات التي تطرأ على حسابك", checked: true },
@@ -234,19 +234,19 @@ export default function UserProfile() {
                       { label: "العروض التسويقية والترويجية", checked: false },
                       { label: "تنبيهات الأمان", checked: true, disabled: true },
                     ].map(({ label, checked, disabled }) => (
-                      <label key={label} className="flex items-center gap-2 text-sm text-gray-700">
+                      <label key={label} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
                         <input
                           type="checkbox"
                           defaultChecked={checked}
                           disabled={disabled}
-                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-slate-500 dark:bg-slate-700"
                         />
                         {label}
                       </label>
                     ))}
                   </div>
                   <div className="pt-5 text-center">
-                    <button type="submit" className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       حفظ التغييرات
                     </button>
                   </div>
@@ -262,16 +262,16 @@ export default function UserProfile() {
                     { label: "إعادة إدخال كلمة المرور الجديدة", name: "renewPassword" },
                   ].map(({ label, name }) => (
                     <div key={name} className="grid grid-cols-1 gap-2 sm:grid-cols-4 sm:items-center">
-                      <label className="text-sm text-gray-600">{label}</label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{label}</label>
                       <input
                         type="password"
                         name={name}
-                        className="sm:col-span-3 rounded border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+                        className="sm:col-span-3 rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-gray-100"
                       />
                     </div>
                   ))}
                   <div className="pt-2 text-center">
-                    <button type="submit" className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                    <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       تغيير كلمة المرور
                     </button>
                   </div>
