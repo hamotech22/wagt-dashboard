@@ -1,222 +1,280 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
-const CONTRACTORS = [
-  {
-    id: 1,
-    commercialName: "الأفق البيئية",
-    legalName: "شركة الأفق للمقاولات والخدمات البيئية",
-    contactName: "خالد العسيري",
-    phone: "0501234567",
-    email: "info@ofoq.example",
-    baladiAccountId: "778120",
-    status: "active",
-    createdAt: "2026-05-02",
-  },
-  {
-    id: 2,
-    commercialName: "نجران للنقل",
-    legalName: "مؤسسة نجران للنقل والتخلص من النفايات",
-    contactName: "سعيد اليامي",
-    phone: "0559876543",
-    email: "nagran@example.com",
-    baladiAccountId: "778455",
-    status: "active",
-    createdAt: "2026-04-15",
-  },
-  {
-    id: 3,
-    commercialName: "الربوع",
-    legalName: "شركة الربوع للمقاولات العامة",
-    contactName: "محمد الشهري",
-    phone: "0533344556",
-    email: "",
-    baladiAccountId: "",
-    status: "suspended",
-    createdAt: "2026-02-10",
-  },
-  {
-    id: 4,
-    commercialName: "البنيان الحديثة",
-    legalName: "شركة البنيان الحديثة للمقاولات",
-    contactName: "فهد القحطاني",
-    phone: "0544455667",
-    email: "",
-    baladiAccountId: "779010",
-    status: "active",
-    createdAt: "2026-03-28",
-  },
-];
-
-const PROJECTS = [
-  { id: 1, name: "نظافة بلدية نجران المركزية" },
-  { id: 2, name: "نظافة بلدية شرورة" },
-  { id: 3, name: "تشغيل مردم نجران" },
-  { id: 4, name: "نقل المخلفات الإنشائية" },
-];
-
-const LINKS = [
-  { id: 1, projectId: 1, contractNumber: "C-2026-114", startDate: "2026-01-01", endDate: "2026-12-31" },
-  { id: 2, projectId: 3, contractNumber: "C-2026-120", startDate: "2026-03-01", endDate: "2027-02-28" },
-];
+const API_URL = "http://localhost:3000";
 
 const STATUS = {
-  active: ["نشط", "bg-emerald-50 text-emerald-800"],
-  inactive: ["غير نشط", "bg-slate-100 text-slate-700"],
-  suspended: ["موقوف", "bg-amber-50 text-amber-800"],
+  active: ["نشط", "bg-green-50 text-green-700"],
+  inactive: ["غير نشط", "bg-gray-100 text-gray-700"],
+  suspended: ["موقوف", "bg-yellow-50 text-yellow-700"],
 };
 
-const input = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700";
+const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const cardCls = "bg-white rounded-xl shadow-sm";
+const actionBtnCls = "rounded-md border px-2.5 py-1";
+const primaryBtnCls = "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium";
+
+async function fetchContractorDetails(id) {
+  const [contractorResponse, projectsResponse] = await Promise.all([
+    axios.get(`${API_URL}/contractors/${id}`),
+    axios.get(`${API_URL}/projects`),
+  ]);
+
+  if (!contractorResponse.data || !Array.isArray(projectsResponse.data)) {
+    throw new Error("The contractors or projects API returned an invalid response.");
+  }
+
+  return {
+    contractor: contractorResponse.data,
+    projects: projectsResponse.data,
+  };
+}
 
 export default function ContractorDetails() {
-  const navigate = useNavigate();
   const { id } = useParams();
-  const c = CONTRACTORS.find((item) => String(item.id) === String(id)) ?? CONTRACTORS[0];
-  const [links, setLinks] = useState(LINKS);
+
+  const projectIdRef = useRef();
+
+  const [contractor, setContractor] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [actionError, setActionError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ projectId: "", contractNumber: "", startDate: "", endDate: "" });
 
-  const available = PROJECTS.filter((p) => !links.some((l) => l.projectId === p.id));
-  const projectName = (id) => PROJECTS.find((p) => p.id === id)?.name;
+  const loadData = async () => {
+    setLoading(true);
+    setError("");
 
-  const addLink = () => {
-    if (!form.projectId) return;
-    setLinks([...links, { ...form, id: Date.now(), projectId: Number(form.projectId) }]);
-    setForm({ projectId: "", contractNumber: "", startDate: "", endDate: "" });
-    setShowForm(false);
+    try {
+      const data = await fetchContractorDetails(id);
+      setContractor(data.contractor);
+      setProjects(data.projects);
+    } catch (loadError) {
+      console.error("Failed to load contractor details:", loadError);
+      setError("تعذر تحميل بيانات المقاول أو المشاريع المرتبطة.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    let active = true;
+
+    fetchContractorDetails(id)
+      .then((data) => {
+        if (!active) return;
+        setContractor(data.contractor);
+        setProjects(data.projects);
+      })
+      .catch((loadError) => {
+        console.error("Failed to load contractor details:", loadError);
+        if (active) setError("تعذر تحميل بيانات المقاول أو المشاريع المرتبطة.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  const contractorProjects = projects.filter((project) =>
+    (project.contractorIds ?? []).some((contractorId) => String(contractorId) === String(id)),
+  );
+  const available = projects.filter(
+    (project) => !(project.contractorIds ?? []).some((contractorId) => String(contractorId) === String(id)),
+  );
+
+  const addLink = async () => {
+    const projectId = projectIdRef.current?.value;
+    if (!projectId) return;
+
+    const project = available.find((item) => String(item.id) === projectId);
+    if (!project) return;
+
+    setSaving(true);
+    setActionError("");
+    try {
+      await axios.put(`${API_URL}/projects/${project.id}`, {
+        ...project,
+        contractorIds: [...(project.contractorIds ?? []), Number(id)],
+      });
+      setShowForm(false);
+      await loadData();
+    } catch (saveError) {
+      console.error("Failed to link contractor to project:", saveError);
+      setActionError("تعذر ربط المقاول بالمشروع. حاول مرة أخرى.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeLink = async (project) => {
+    setSaving(true);
+    setActionError("");
+    try {
+      await axios.put(`${API_URL}/projects/${project.id}`, {
+        ...project,
+        contractorIds: (project.contractorIds ?? []).filter((contractorId) => String(contractorId) !== String(id)),
+      });
+      await loadData();
+    } catch (saveError) {
+      console.error("Failed to unlink contractor from project:", saveError);
+      setActionError("تعذر فك ارتباط المقاول بالمشروع. حاول مرة أخرى.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div dir="rtl" className="p-6 text-gray-400" aria-busy="true">
+        جارِ التحميل...
+      </div>
+    );
+  }
+
+  if (error || !contractor) {
+    return (
+      <div dir="rtl" className="flex flex-col items-center gap-3 p-16 text-center">
+        <p className="font-medium text-gray-800">تعذر فتح بيانات المقاول</p>
+        <p className="text-sm text-gray-500">{error || "المقاول غير موجود."}</p>
+        <div className="flex gap-2">
+          <button onClick={loadData} className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
+            إعادة المحاولة
+          </button>
+          <Link to="/dashboard/contractors" className={`${primaryBtnCls} inline-flex items-center`}>
+            العودة للمقاولين
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const info = [
-    ["الاسم القانوني", c.legalName],
-    ["مسؤول التواصل", c.contactName],
-    ["الجوال", c.phone],
-    ["البريد الإلكتروني", c.email],
-    ["رقم حساب بلدي", c.baladiAccountId],
-    ["تاريخ الإضافة", c.createdAt],
+    ["الاسم القانوني", contractor.legalName || contractor.name],
+    ["مسؤول التواصل", contractor.contactName],
+    ["الجوال", contractor.phone],
+    ["البريد الإلكتروني", contractor.email],
+    ["رقم حساب بلدي", contractor.baladiAccountId],
+    ["تاريخ الإضافة", contractor.createdAt],
   ];
 
   return (
-    <div dir="rtl" className="min-h-screen bg-slate-50 p-6 text-slate-900">
-      <div className="mx-auto w-full max-w-7xl">
-        <Breadcrumb>
-          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
-          <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
-          <Breadcrumb.Current>{c.commercialName}</Breadcrumb.Current>
-        </Breadcrumb>
-        <button
-          onClick={() => navigate("/dashboard/contractors")}
-          className="mb-4 inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
-        >
-          ‹ العودة إلى المقاولين
-        </button>
+    <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
+        <Breadcrumb.Current>{contractor.commercialName || contractor.name}</Breadcrumb.Current>
+      </Breadcrumb>
 
-        {/* الترويسة */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">{c.commercialName}</h1>
-            <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS[c.status][1]}`}>{STATUS[c.status][0]}</span>
-          </div>
-          <button
-            onClick={() => navigate(`/dashboard/contractors/edit/${c.id}`)}
-            className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-          >
+      {/* الترويسة */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-gray-800">{contractor.commercialName || contractor.name}</h1>
+          <span className={`px-2 py-0.5 rounded text-xs ${STATUS[contractor.status]?.[1] ?? "bg-gray-100 text-gray-700"}`}>
+            {STATUS[contractor.status]?.[0] ?? contractor.status ?? "غير محدد"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <Link to="/dashboard/contractors" className="border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg">
+            العودة
+          </Link>
+          <Link to={`/dashboard/contractors/edit/${contractor.id}`} className={primaryBtnCls}>
             تعديل
-          </button>
+          </Link>
         </div>
+      </div>
 
-        {/* البيانات الأساسية */}
-        <div className="mb-6 rounded-lg border border-slate-200 bg-white p-6">
-          <h2 className="mb-4 font-bold">البيانات الأساسية</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {info.map(([label, value]) => (
-              <div key={label}>
-                <div className="text-xs text-slate-500">{label}</div>
-                <div className="mt-0.5 text-sm font-medium">{value || "—"}</div>
-              </div>
-            ))}
-          </div>
+      {/* البيانات الأساسية */}
+      <div className={cardCls}>
+        <div className="border-b px-5 py-3">
+          <h2 className="font-semibold text-gray-800">البيانات الأساسية</h2>
         </div>
-
-        {/* المشاريع المرتبطة */}
-        <div className="rounded-lg border border-slate-200 bg-white">
-          <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-            <h2 className="font-bold">المشاريع المرتبطة ({links.length})</h2>
-            {available.length > 0 && (
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="inline-flex h-10 items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
-              >
-                {showForm ? "إغلاق" : "ربط بمشروع"}
-              </button>
-            )}
-          </div>
-
-          {showForm && (
-            <div className="grid gap-3 border-b border-slate-100 bg-slate-50 px-6 py-4 sm:grid-cols-2 lg:grid-cols-5">
-              <select className={input} value={form.projectId} onChange={(e) => setForm({ ...form, projectId: e.target.value })}>
-                <option value="">اختر المشروع</option>
-                {available.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-              <input
-                className={input}
-                placeholder="رقم العقد"
-                value={form.contractNumber}
-                onChange={(e) => setForm({ ...form, contractNumber: e.target.value })}
-              />
-              <input
-                type="date"
-                className={input}
-                value={form.startDate}
-                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-              />
-              <input type="date" className={input} value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
-              <button
-                onClick={addLink}
-                className="inline-flex h-10 items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
-              >
-                ربط
-              </button>
+        <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3">
+          {info.map(([label, value]) => (
+            <div key={label}>
+              <div className="text-xs text-gray-400">{label}</div>
+              <div className="mt-0.5 text-sm font-medium text-gray-800">{value || "—"}</div>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* المشاريع المرتبطة */}
+      <div className={cardCls}>
+        <div className="flex items-center justify-between border-b px-5 py-3">
+          <h2 className="font-semibold text-gray-800">المشاريع المرتبطة ({contractorProjects.length})</h2>
+          {available.length > 0 && (
+            <button onClick={() => setShowForm(!showForm)} className={primaryBtnCls}>
+              {showForm ? "إغلاق" : "ربط بمشروع"}
+            </button>
           )}
+        </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200 text-sm">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="px-6 py-3 text-start">المشروع</th>
-                  <th className="px-6 py-3 text-start">رقم العقد</th>
-                  <th className="px-6 py-3 text-start">بداية العقد</th>
-                  <th className="px-6 py-3 text-start">نهاية العقد</th>
-                  <th className="px-6 py-3"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {links.map((l) => (
-                  <tr key={l.id}>
-                    <td className="px-6 py-3 font-medium">{projectName(l.projectId)}</td>
-                    <td className="px-6 py-3">{l.contractNumber || "—"}</td>
-                    <td className="px-6 py-3">{l.startDate || "—"}</td>
-                    <td className="px-6 py-3">{l.endDate || "—"}</td>
-                    <td className="px-6 py-3 text-end">
-                      <button
-                        onClick={() => setLinks(links.filter((x) => x.id !== l.id))}
-                        className="inline-flex h-9 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200 dark:hover:bg-red-900"
-                      >
-                        فك الربط
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {links.length === 0 && <p className="py-10 text-center text-sm text-slate-500">غير مرتبط بأي مشروع</p>}
+        {showForm && (
+          <div className="grid gap-3 border-b bg-gray-50 px-5 py-4 sm:grid-cols-2">
+            <select ref={projectIdRef} className={inputCls}>
+              <option value="">اختر المشروع</option>
+              {available.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <button onClick={addLink} disabled={saving} className={primaryBtnCls}>
+              {saving ? "جارٍ الربط..." : "ربط"}
+            </button>
           </div>
+        )}
+        {actionError && <p role="alert" className="px-5 pt-3 text-sm text-red-600">{actionError}</p>}
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-right">
+            <thead className="bg-gray-50 text-gray-600">
+              <tr>
+                <th className="p-3">المشروع</th>
+                <th className="p-3">رقم العقد</th>
+                <th className="p-3">بداية العقد</th>
+                <th className="p-3">نهاية العقد</th>
+                <th className="p-3">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contractorProjects.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-400">
+                    غير مرتبط بأي مشروع
+                  </td>
+                </tr>
+              )}
+
+              {contractorProjects.map((project) => (
+                <tr key={project.id} className="border-t hover:bg-gray-50">
+                  <td className="p-3 font-medium text-gray-800">{project.name || "—"}</td>
+                  <td className="p-3">{project.contractNumber || "—"}</td>
+                  <td className="p-3">{project.startDate || "—"}</td>
+                  <td className="p-3">{project.endDate || "—"}</td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-2 text-xs">
+                      <button
+                        onClick={() => removeLink(project)}
+                        disabled={saving}
+                        className={`${actionBtnCls} border-red-200 bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50`}
+                      >
+                        فك الارتباط
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

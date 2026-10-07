@@ -9,6 +9,22 @@ const API_URL = "http://localhost:3000";
 const selectCls = "border rounded-lg px-3 py-2 text-sm";
 const actionBtnCls = "rounded-md border px-2.5 py-1";
 
+const fetchSiteData = async () => {
+  const [sitesRes, projectsRes, wasteTypesRes, gatesRes] = await Promise.all([
+    axios.get(`${API_URL}/sites`),
+    axios.get(`${API_URL}/projects`),
+    axios.get(`${API_URL}/wasteTypesRef`),
+    axios.get(`${API_URL}/gates`),
+  ]);
+
+  return {
+    sites: sitesRes.data,
+    projects: projectsRes.data,
+    wasteTypes: wasteTypesRes.data,
+    gates: gatesRes.data,
+  };
+};
+
 export default function SitesList() {
   const [sites, setSites] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -26,24 +42,38 @@ export default function SitesList() {
     setLoading(true);
     setError(false);
 
-    Promise.all([
-      axios.get(`${API_URL}/sites`),
-      axios.get(`${API_URL}/projects`),
-      axios.get(`${API_URL}/wasteTypesRef`),
-      axios.get(`${API_URL}/gates`),
-    ])
-      .then(([sitesRes, projectsRes, wasteTypesRes, gatesRes]) => {
-        setSites(sitesRes.data);
-        setProjects(projectsRes.data);
-        setWasteTypes(wasteTypesRes.data);
-        setGates(gatesRes.data);
+    fetchSiteData()
+      .then((data) => {
+        setSites(data.sites);
+        setProjects(data.projects);
+        setWasteTypes(data.wasteTypes);
+        setGates(data.gates);
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadData();
+    let active = true;
+
+    fetchSiteData()
+      .then((data) => {
+        if (!active) return;
+        setSites(data.sites);
+        setProjects(data.projects);
+        setWasteTypes(data.wasteTypes);
+        setGates(data.gates);
+      })
+      .catch(() => {
+        if (active) setError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // حذف موقع
@@ -73,13 +103,15 @@ export default function SitesList() {
   // الفلترة
   const filtered = sites.filter((s) => {
     const text = search.toLowerCase();
+    const siteName = s.nameAr || s.name || "";
+    const siteStatus = s.status ?? (s.active === true ? "active" : "inactive");
     const matchSearch =
       !search ||
-      (s.nameAr || "").includes(search) ||
+      siteName.toLowerCase().includes(text) ||
       (s.nameEn || "").toLowerCase().includes(text) ||
-      (s.finalDestinationCode || "").includes(search);
+      (s.finalDestinationCode || "").toLowerCase().includes(text);
 
-    const matchStatus = !status || s.status === status;
+    const matchStatus = !status || siteStatus === status;
     const matchProject = !projectId || String(s.projectId) === projectId;
 
     return matchSearch && matchStatus && matchProject;
@@ -177,10 +209,12 @@ export default function SitesList() {
                 return (
                   <tr key={s.id} className="border-t hover:bg-gray-50">
                     <td className="p-3">
-                      <div className="font-medium text-gray-800">{s.nameAr}</div>
-                      <div className="text-xs text-gray-400" dir="ltr">
-                        {s.nameEn}
-                      </div>
+                      <div className="font-medium text-gray-800">{s.nameAr || s.name || "موقع بدون اسم"}</div>
+                      {s.nameEn && (
+                        <div className="text-xs text-gray-400" dir="ltr">
+                          {s.nameEn}
+                        </div>
+                      )}
                     </td>
                     <td className="p-3">{getProjectName(s.projectId)}</td>
                     <td className="p-3 font-mono text-xs" dir="ltr">
@@ -203,7 +237,7 @@ export default function SitesList() {
                     </td>
                     <td className="p-3">{getGatesCount(s.id)}</td>
                     <td className="p-3">
-                      <StatusBadge status={s.status} />
+                      <StatusBadge status={s.status ?? (s.active === true ? "active" : "inactive")} />
                     </td>
                     <td className="p-3">
                       <div className="flex items-center gap-2 text-xs">

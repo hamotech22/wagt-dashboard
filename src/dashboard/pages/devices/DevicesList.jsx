@@ -9,6 +9,16 @@ const API_URL = "http://localhost:3000";
 const selectCls = "border rounded-lg px-3 py-2 text-sm";
 const actionBtnCls = "rounded-md border px-2.5 py-1";
 
+const getConnectionStatus = (device) => {
+  if (device.connectionStatus === "online" || device.connectionStatus === "offline") return device.connectionStatus;
+  return device.connection === "متصل" ? "online" : "offline";
+};
+
+const fetchDeviceData = async () => {
+  const [devicesRes, gatesRes] = await Promise.all([axios.get(`${API_URL}/devices`), axios.get(`${API_URL}/gates`)]);
+  return { devices: devicesRes.data, gates: gatesRes.data };
+};
+
 function StatCard({ label, value, color }) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
@@ -22,6 +32,7 @@ export default function DevicesList() {
   const [devices, setDevices] = useState([]);
   const [gates, setGates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
@@ -31,17 +42,38 @@ export default function DevicesList() {
   // جلب البيانات من السيرفر
   const loadData = () => {
     setLoading(true);
-    Promise.all([axios.get(`${API_URL}/devices`), axios.get(`${API_URL}/gates`)])
-      .then(([devicesRes, gatesRes]) => {
-        setDevices(devicesRes.data);
-        setGates(gatesRes.data);
+    fetchDeviceData()
+      .then((data) => {
+        setDevices(data.devices);
+        setGates(data.gates);
       })
-      .catch(() => {})
+      .catch((error) => {
+        console.error("Failed to load devices:", error);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadData();
+    let active = true;
+
+    fetchDeviceData()
+      .then((data) => {
+        if (!active) return;
+        setDevices(data.devices);
+        setGates(data.gates);
+      })
+      .catch((error) => {
+        console.error("Failed to load devices:", error);
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // حذف جهاز
@@ -52,7 +84,11 @@ export default function DevicesList() {
   };
 
   // اسم البوابة من رقمها
-  const getGateName = (id) => gates.find((g) => String(g.id) === String(id))?.nameAr || "-";
+  const getGateName = (device) =>
+    gates.find((gate) => String(gate.id) === String(device.gateId ?? device.gate))?.nameAr ||
+    gates.find((gate) => String(gate.id) === String(device.gateId ?? device.gate))?.name ||
+    device.gate ||
+    "-";
 
   // أنواع الأجهزة الموجودة (بدون تكرار)
   const types = [...new Set(devices.map((d) => d.type).filter(Boolean))];
@@ -61,16 +97,16 @@ export default function DevicesList() {
   const text = search.toLowerCase();
   const filtered = devices.filter(
     (d) =>
-      ((d.nameAr || "").toLowerCase().includes(text) ||
+      ((d.nameAr || d.name || "").toLowerCase().includes(text) ||
         (d.connectionId || "").toLowerCase().includes(text) ||
         (d.ip || "").includes(search)) &&
       (!type || d.type === type) &&
-      (!gateId || String(d.gateId) === gateId) &&
-      (!connection || d.connectionStatus === connection)
+      (!gateId || String(d.gateId ?? gates.find((gate) => gate.name === d.gate)?.id) === gateId) &&
+      (!connection || getConnectionStatus(d) === connection)
   );
 
   // الإحصائيات
-  const online = devices.filter((d) => d.connectionStatus === "online").length;
+  const online = devices.filter((device) => getConnectionStatus(device) === "online").length;
   const maintenance = devices.filter((d) => d.status === "maintenance").length;
 
   return (
@@ -120,7 +156,7 @@ export default function DevicesList() {
           <option value="">كل البوابات</option>
           {gates.map((g) => (
             <option key={g.id} value={g.id}>
-              {g.nameAr}
+              {g.nameAr || g.name}
             </option>
           ))}
         </select>
@@ -160,19 +196,19 @@ export default function DevicesList() {
             {!loading && filtered.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-gray-400">
-                  لا توجد أجهزة
+                  {loadError ? "تعذّر تحميل الأجهزة. تحقق من تشغيل json-server ثم أعد المحاولة." : "لا توجد أجهزة"}
                 </td>
               </tr>
             )}
 
-            {filtered.map((d) => (
+            {!loading && !loadError && filtered.map((d) => (
               <tr key={d.id} className="border-t hover:bg-gray-50">
                 <td className="p-3 font-medium text-gray-800">
                   <span className="ml-2">{TYPE_ICON[d.type]}</span>
-                  {d.nameAr || "-"}
+                  {d.nameAr || d.name || "-"}
                 </td>
                 <td className="p-3">{TYPE_LABEL[d.type] || d.type || "-"}</td>
-                <td className="p-3">{getGateName(d.gateId)}</td>
+                <td className="p-3">{getGateName(d)}</td>
                 <td className="p-3 font-mono text-xs" dir="ltr">
                   {d.connectionId || "-"}
                 </td>
@@ -180,7 +216,7 @@ export default function DevicesList() {
                   {d.ip || "-"}
                 </td>
                 <td className="p-3">
-                  <ConnectionBadge status={d.connectionStatus} />
+                  <ConnectionBadge status={getConnectionStatus(d)} />
                 </td>
                 <td className="p-3 text-xs text-gray-500">{formatDate(d.lastSeen)}</td>
                 <td className="p-3">

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { StatusBadge, PlateBadge, STATUS_OPTIONS, txCode, tons, formatDate, isToday } from "./TransactionBadges";
+import { StatusBadge, PlateBadge, STATUS_OPTIONS, txCode, tons, formatDate, isToday, getTransactionPlate, getWasteWeight } from "./TransactionBadges";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
@@ -26,6 +26,7 @@ function StatCard({ label, value, unit, color }) {
  */
 export default function TransactionsTable({ mode = "all", title, subtitle }) {
   const [rows, setRows] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [sites, setSites] = useState([]);
   const [gates, setGates] = useState([]);
   const [contractors, setContractors] = useState([]);
@@ -48,13 +49,15 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
       axios.get(`${API_URL}/gates`),
       axios.get(`${API_URL}/contractors`),
       axios.get(`${API_URL}/wasteTypesRef`),
+      axios.get(`${API_URL}/vehicles`),
     ])
-      .then(([txRes, sitesRes, gatesRes, contractorsRes, wasteRes]) => {
+      .then(([txRes, sitesRes, gatesRes, contractorsRes, wasteRes, vehiclesRes]) => {
         setRows(txRes.data);
         setSites(sitesRes.data);
         setGates(gatesRes.data);
         setContractors(contractorsRes.data);
         setWasteTypes(wasteRes.data);
+        setVehicles(vehiclesRes.data);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -75,7 +78,10 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
       const matchMode = mode !== "exit" || !!t.exitAt;
       const matchSearch =
         !q ||
-        (String(t.plateNumber ?? "") + String(t.plateChars ?? "").replace(/\s/g, "")).includes(q) ||
+        (() => {
+          const { number, chars } = getTransactionPlate(t, vehicles);
+          return (String(number ?? "") + String(chars ?? "").replace(/\s/g, "")).toLowerCase().includes(q);
+        })() ||
         txCode(t.id).toLowerCase().includes(q);
       const matchFrom = !from || (date && date >= new Date(from));
       const matchTo = !to || (date && date <= new Date(to + "T23:59:59"));
@@ -92,10 +98,13 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
   const enteredToday = rows.filter((t) => isToday(t.entryAt) && t.status !== "rejected").length;
   const exitedToday = rows.filter((t) => isToday(t.exitAt)).length;
   const inside = rows.filter((t) => t.status === "inside").length;
-  const wasteToday = rows.filter((t) => isToday(t.exitAt) && t.status === "completed").reduce((sum, t) => sum + (t.wasteWeight || 0), 0);
+  const wasteToday = rows
+    .filter((t) => isToday(t.exitAt) && t.status === "completed")
+    .reduce((sum, t) => sum + (getWasteWeight(t) ?? 0), 0);
 
   // أعمدة الجدول (تتكرر في كل الأوضاع)
-  const plate = (t) => <PlateBadge number={t.plateNumber} chars={t.plateChars} />;
+  const plate = (t) => <PlateBadge {...getTransactionPlate(t, vehicles)} />;
+  const netWaste = (t) => <b>{tons(getWasteWeight(t))}</b>;
   const code = (t) => (
     <Link to={`/dashboard/transactions/${t.id}`} className="font-mono text-xs text-blue-600 hover:underline" dir="ltr">
       {txCode(t.id)}
@@ -114,7 +123,7 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
       ["نوع النفايات", (t) => getName(wasteTypes, t.wasteTypeCode, "code")],
       ["وقت الدخول", (t) => time(t.entryAt)],
       ["وقت الخروج", (t) => time(t.exitAt)],
-      ["صافي النفايات (طن)", (t) => <b>{tons(t.wasteWeight)}</b>],
+      ["صافي النفايات (طن)", netWaste],
       ["الحالة", state],
     ],
     entry: [
@@ -134,7 +143,7 @@ export default function TransactionsTable({ mode = "all", title, subtitle }) {
       ["بوابة الخروج", (t) => getName(gates, t.exitGateId)],
       ["وقت الخروج", (t) => time(t.exitAt)],
       ["وزن الخروج (طن)", (t) => tons(t.outWeight)],
-      ["صافي النفايات (طن)", (t) => <b>{tons(t.wasteWeight)}</b>],
+      ["صافي النفايات (طن)", netWaste],
       ["الحالة", state],
     ],
   };

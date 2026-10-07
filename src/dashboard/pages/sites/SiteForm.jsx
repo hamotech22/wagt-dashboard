@@ -39,6 +39,16 @@ const EMPTY = {
   notes: "",
 };
 
+const getInitialForm = (initialData) =>
+  initialData
+    ? {
+        ...EMPTY,
+        ...initialData,
+        nameAr: initialData.nameAr ?? initialData.name ?? "",
+        status: initialData.status ?? (initialData.active === true ? "active" : "inactive"),
+      }
+    : EMPTY;
+
 function Field({ label, error, children }) {
   return (
     <div>
@@ -53,7 +63,7 @@ const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none 
 
 export default function SiteForm({ initialData, onSubmit, submitLabel = "حفظ" }) {
   const navigate = useNavigate();
-  const [form, setForm] = useState(EMPTY);
+  const [form, setForm] = useState(() => getInitialForm(initialData));
   const [lookups, setLookups] = useState({ projects: [], finalDestinations: [], wasteTypes: [] });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -65,10 +75,6 @@ export default function SiteForm({ initialData, onSubmit, submitLabel = "حفظ"
       .then(setLookups)
       .catch(() => setLookupError("تعذّر تحميل القوائم. تحقق من تشغيل json-server."));
   }, []);
-
-  useEffect(() => {
-    if (initialData) setForm({ ...EMPTY, ...initialData });
-  }, [initialData]);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 

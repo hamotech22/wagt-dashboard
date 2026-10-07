@@ -27,14 +27,18 @@ export default function GateDetails() {
       .get(`${API_URL}/gates/${id}`)
       .then(({ data }) => {
         setGate(data);
-        return Promise.all([axios.get(`${API_URL}/sites/${data.siteId}`), axios.get(`${API_URL}/devices?gateId=${data.id}`)]);
+        return Promise.all([axios.get(`${API_URL}/sites/${data.siteId}`), axios.get(`${API_URL}/devices`)]);
       })
       .then(([siteRes, devicesRes]) => {
         setSite(siteRes.data);
-        setDevices(devicesRes.data);
+        setDevices(
+          devicesRes.data.filter(
+            (device) => String(device.gateId ?? device.gate) === String(id) || device.gate === gate?.name,
+          ),
+        );
       })
       .catch(() => {});
-  }, [id]);
+  }, [id, gate?.name]);
 
   if (!gate) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
 

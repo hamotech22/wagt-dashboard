@@ -13,12 +13,13 @@ const fetchSite = (id) =>
     .catch(() => null);
 const fetchLookups = () =>
   axios
-    .all([axios.get(`${API_URL}/projects`), axios.get(`${API_URL}/wasteTypesRef`)])
-    .then(([projectsRes, wasteTypesRes]) => ({
+    .all([axios.get(`${API_URL}/projects`), axios.get(`${API_URL}/wasteTypesRef`), axios.get(`${API_URL}/gates`)])
+    .then(([projectsRes, wasteTypesRes, gatesRes]) => ({
       projects: projectsRes?.data ?? [],
       wasteTypes: wasteTypesRes?.data ?? [],
+      gates: gatesRes?.data ?? [],
     }))
-    .catch(() => ({ projects: [], finalDestinations: [], wasteTypes: [] }));
+    .catch(() => ({ projects: [], wasteTypes: [], gates: [] }));
 
 function Item({ label, children }) {
   return (
@@ -32,7 +33,7 @@ function Item({ label, children }) {
 export default function SiteDetails() {
   const { id } = useParams();
   const [site, setSite] = useState(null);
-  const [lookups, setLookups] = useState({ projects: [], wasteTypes: [] });
+  const [lookups, setLookups] = useState({ projects: [], wasteTypes: [], gates: [] });
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
@@ -49,8 +50,9 @@ export default function SiteDetails() {
   const currentCapacity = Number(site.currentCapacity) || 0;
   const totalCapacity = Number(site.totalCapacity) || 0;
   const pct = totalCapacity ? Math.min(100, Math.round((currentCapacity / totalCapacity) * 100)) : 0;
-  const project = lookups.projects.find((p) => p.id === site.projectId)?.name;
+  const project = lookups.projects.find((p) => String(p.id) === String(site.projectId))?.name;
   const wasteTypeCodes = Array.isArray(site.wasteTypeCodes) ? site.wasteTypeCodes : [];
+  const siteGates = lookups.gates.filter((gate) => String(gate.siteId) === String(site.id));
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -80,7 +82,7 @@ export default function SiteDetails() {
         {/* معلومات */}
         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-5 grid grid-cols-2 gap-5">
           <Item label="الحالة">
-            <StatusBadge status={site.status} />
+            <StatusBadge status={site.status ?? (site.active === true ? "active" : "inactive")} />
           </Item>
           <Item label="المشروع">{project}</Item>
           <Item label="كود نقطة التخلص">
@@ -88,13 +90,13 @@ export default function SiteDetails() {
               {site.finalDestinationCode}
             </span>
           </Item>
-          <Item label="عدد البوابات">{site.gatesCount}</Item>
+          <Item label="عدد البوابات">{siteGates.length}</Item>
           <Item label="أنواع النفايات">
             <div className="flex flex-wrap gap-1">
               {wasteTypeCodes.length
-                ? wasteTypeCodes.map((c) => (
-                    <span key={c} className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">
-                      {lookups.wasteTypes.find((w) => w.code === c)?.name || c}
+                ? wasteTypeCodes.map((code) => (
+                    <span key={code} className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">
+                      {lookups.wasteTypes.find((w) => String(w.code) === String(code))?.name || code}
                     </span>
                   ))
                 : "-"}
@@ -129,10 +131,19 @@ export default function SiteDetails() {
         </div>
       </div>
 
-      {/* البوابات — مكان جاهز للربط لاحقاً */}
       <div className="bg-white rounded-xl shadow-sm p-5">
-        <h3 className="font-semibold text-gray-800 mb-2">البوابات التابعة للموقع</h3>
-        <p className="text-sm text-gray-400">سيتم عرض بوابات هذا الموقع هنا عند إكمال صفحة البوابات.</p>
+        <h3 className="font-semibold text-gray-800 mb-3">البوابات التابعة للموقع ({siteGates.length})</h3>
+        {siteGates.length === 0 ? (
+          <p className="text-sm text-gray-400">لا توجد بوابات مرتبطة بهذا الموقع.</p>
+        ) : (
+          <ul className="divide-y">
+            {siteGates.map((gate) => (
+              <li key={gate.id} className="py-3 text-sm text-gray-700">
+                {gate.name}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

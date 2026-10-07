@@ -9,6 +9,19 @@ const API_URL = "http://localhost:3000";
 const selectCls = "border rounded-lg px-3 py-2 text-sm";
 const actionBtnCls = "rounded-md border px-2.5 py-1";
 
+const gateIsOnline = (gate) => (gate.connectionStatus ?? gate.status) === "online";
+const gateStatus = (gate) => gate.maintenance ? "maintenance" : gate.status === "offline" ? "inactive" : gate.status;
+
+const fetchGateData = async () => {
+  const [gatesRes, sitesRes, devicesRes] = await Promise.all([
+    axios.get(`${API_URL}/gates`),
+    axios.get(`${API_URL}/sites`),
+    axios.get(`${API_URL}/devices`),
+  ]);
+
+  return { gates: gatesRes.data, sites: sitesRes.data, devices: devicesRes.data };
+};
+
 function StatCard({ label, value, color }) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
@@ -23,6 +36,7 @@ export default function GatesList() {
   const [sites, setSites] = useState([]);
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const [search, setSearch] = useState("");
   const [siteId, setSiteId] = useState("");
@@ -32,18 +46,40 @@ export default function GatesList() {
   // جلب البيانات من السيرفر
   const loadData = () => {
     setLoading(true);
-    Promise.all([axios.get(`${API_URL}/gates`), axios.get(`${API_URL}/sites`), axios.get(`${API_URL}/devices`)])
-      .then(([gatesRes, sitesRes, devicesRes]) => {
-        setGates(gatesRes.data);
-        setSites(sitesRes.data);
-        setDevices(devicesRes.data);
+    fetchGateData()
+      .then((data) => {
+        setGates(data.gates);
+        setSites(data.sites);
+        setDevices(data.devices);
       })
-      .catch(() => {})
+      .catch((error) => {
+        console.error("Failed to load gates:", error);
+        setLoadError(true);
+      })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadData();
+    let active = true;
+
+    fetchGateData()
+      .then((data) => {
+        if (!active) return;
+        setGates(data.gates);
+        setSites(data.sites);
+        setDevices(data.devices);
+      })
+      .catch((error) => {
+        console.error("Failed to load gates:", error);
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // حذف بوابة
@@ -54,23 +90,24 @@ export default function GatesList() {
   };
 
   // اسم الموقع من رقمه
-  const getSiteName = (id) => sites.find((s) => String(s.id) === String(id))?.name || "-";
+  const getSiteName = (id) => sites.find((s) => String(s.id) === String(id))?.nameAr || sites.find((s) => String(s.id) === String(id))?.name || "-";
 
   // عدد الأجهزة المرتبطة ببوابة
-  const getDevicesCount = (id) => devices.filter((d) => String(d.gateId) === String(id)).length;
+  const getDevicesCount = (id, name) =>
+    devices.filter((device) => String(device.gateId ?? device.gate) === String(id) || device.gate === name).length;
 
   // الفلترة
   const filtered = gates.filter(
     (g) =>
-      (g.nameAr || "").includes(search) &&
+      (g.nameAr || g.name || "").toLowerCase().includes(search.trim().toLowerCase()) &&
       (!siteId || String(g.siteId) === siteId) &&
-      (!status || g.status === status) &&
-      (!connection || g.connectionStatus === connection),
+      (!status || gateStatus(g) === status) &&
+      (!connection || (gateIsOnline(g) ? "online" : "offline") === connection),
   );
 
   // الإحصائيات
-  const online = gates.filter((g) => g.connectionStatus === "online").length;
-  const maintenance = gates.filter((g) => g.status === "maintenance").length;
+  const online = gates.filter(gateIsOnline).length;
+  const maintenance = gates.filter((g) => gateStatus(g) === "maintenance").length;
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -157,24 +194,24 @@ export default function GatesList() {
             {!loading && filtered.length === 0 && (
               <tr>
                 <td colSpan={9} className="p-8 text-center text-gray-400">
-                  لا توجد بوابات
+                  {loadError ? "تعذّر تحميل البوابات. تحقق من تشغيل json-server ثم أعد المحاولة." : "لا توجد بوابات"}
                 </td>
               </tr>
             )}
 
-            {filtered.map((g) => (
+            {!loading && !loadError && filtered.map((g) => (
               <tr key={g.id} className="border-t hover:bg-gray-50">
-                <td className="p-3 font-medium text-gray-800">{g.nameAr}</td>
+                <td className="p-3 font-medium text-gray-800">{g.nameAr || g.name || "بوابة بدون اسم"}</td>
                 <td className="p-3">{getSiteName(g.siteId)}</td>
                 <td className="p-3">{TYPE_LABEL[g.type] || "-"}</td>
                 <td className="p-3">{DIRECTION_LABEL[g.direction] || "-"}</td>
-                <td className="p-3">{getDevicesCount(g.id)}</td>
+                <td className="p-3">{getDevicesCount(g.id, g.nameAr || g.name)}</td>
                 <td className="p-3">
-                  <ConnectionBadge status={g.connectionStatus} />
+                  <ConnectionBadge status={gateIsOnline(g) ? "online" : "offline"} />
                 </td>
                 <td className="p-3 text-xs text-gray-500">{formatDate(g.lastConnection)}</td>
                 <td className="p-3">
-                  <StatusBadge status={g.status} />
+                  <StatusBadge status={gateStatus(g)} />
                 </td>
                 <td className="p-3">
                   <div className="flex items-center gap-2 text-xs">

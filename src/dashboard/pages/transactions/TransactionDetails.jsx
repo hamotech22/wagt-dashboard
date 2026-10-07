@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { StatusBadge, PlateBadge, txCode, tons, formatDate } from "./TransactionBadges";
+import { StatusBadge, PlateBadge, txCode, tons, formatDate, getTransactionPlate, getWasteWeight } from "./TransactionBadges";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
@@ -74,6 +74,7 @@ function Timeline({ tx }) {
 export default function TransactionDetails() {
   const { id } = useParams();
   const [tx, setTx] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
   const [sites, setSites] = useState([]);
   const [gates, setGates] = useState([]);
   const [contractors, setContractors] = useState([]);
@@ -81,7 +82,7 @@ export default function TransactionDetails() {
   const [wasteTypes, setWasteTypes] = useState([]);
 
   // جلب بيانات العملية والقوائم المرتبطة بها
-  const loadData = () => {
+  const loadData = useCallback(() => {
     Promise.all([
       axios.get(`${API_URL}/transactions/${id}`),
       axios.get(`${API_URL}/sites`),
@@ -89,21 +90,23 @@ export default function TransactionDetails() {
       axios.get(`${API_URL}/contractors`),
       axios.get(`${API_URL}/projects`),
       axios.get(`${API_URL}/wasteTypesRef`),
+      axios.get(`${API_URL}/vehicles`),
     ])
-      .then(([txRes, sitesRes, gatesRes, contractorsRes, projectsRes, wasteRes]) => {
+      .then(([txRes, sitesRes, gatesRes, contractorsRes, projectsRes, wasteRes, vehiclesRes]) => {
         setTx(txRes.data);
         setSites(sitesRes.data);
         setGates(gatesRes.data);
         setContractors(contractorsRes.data);
         setProjects(projectsRes.data);
         setWasteTypes(wasteRes.data);
+        setVehicles(vehiclesRes.data);
       })
       .catch(() => {});
-  };
+  }, [id]);
 
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [loadData]);
 
   // إلغاء العملية (يفضّل حصرها بصلاحية transactions.cancel)
   const handleCancel = async () => {
@@ -119,6 +122,7 @@ export default function TransactionDetails() {
   if (!tx) return <div className="p-6 text-gray-400">جارِ التحميل...</div>;
 
   const showNote = tx.note && (tx.status === "rejected" || tx.status === "cancelled");
+  const plate = getTransactionPlate(tx, vehicles);
 
   return (
     <div dir="rtl" className="p-6 space-y-5">
@@ -131,7 +135,7 @@ export default function TransactionDetails() {
       {/* الرأس */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
-          <PlateBadge number={tx.plateNumber} chars={tx.plateChars} size="lg" />
+          <PlateBadge {...plate} size="lg" />
           <div>
             <div className="font-mono text-sm text-gray-500" dir="ltr">
               {txCode(tx.id)}
@@ -173,7 +177,7 @@ export default function TransactionDetails() {
         <div className="flex items-center divide-x divide-x-reverse divide-gray-200">
           <WeightCard label="وزن الدخول (محمّلة)" value={tx.inWeight} />
           <WeightCard label="وزن الخروج (فارغة)" value={tx.outWeight} />
-          <WeightCard label="صافي النفايات" value={tx.wasteWeight} color="text-green-600" />
+          <WeightCard label="صافي النفايات" value={getWasteWeight(tx)} color="text-green-600" />
         </div>
         {tx.status === "inside" && <p className="text-xs text-gray-400 mt-4 text-center">سيُحسب صافي النفايات عند تسجيل وزن الخروج.</p>}
       </div>

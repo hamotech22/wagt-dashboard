@@ -1,7 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
+
 const STATUS = {
   active: { label: "نشطة", cls: "bg-green-100 text-green-700" },
   inactive: { label: "غير نشطة", cls: "bg-gray-200 text-gray-600" },
   maintenance: { label: "صيانة", cls: "bg-yellow-100 text-yellow-700" },
+  online: { label: "نشطة", cls: "bg-green-100 text-green-700" },
+  offline: { label: "غير نشطة", cls: "bg-gray-200 text-gray-600" },
+  online: { label: "نشطة", cls: "bg-green-100 text-green-700" },
+  offline: { label: "غير نشطة", cls: "bg-gray-200 text-gray-600" },
 };
 
 export function StatusBadge({ status }) {
@@ -10,7 +16,7 @@ export function StatusBadge({ status }) {
 }
 
 export function ConnectionBadge({ status }) {
-  const online = status === "online";
+  const online = status === "online" || status === "متصل" || status === "متصلة";
   return (
     <span className="inline-flex items-center gap-1.5 text-xs">
       <span className={`w-2 h-2 rounded-full ${online ? "bg-green-500" : "bg-red-500"}`} />

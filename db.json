@@ -408,7 +408,7 @@
       "status": "غير متصل"
     }
   ],
-   "alerts": [
+  "alerts": [
     {
       "title": "انخفاض مستوى الاتصال بجهاز الوزن في الموقع 2",
       "time": "منذ 15 دقيقة",
@@ -608,19 +608,37 @@
   "contractors": [
     {
       "id": "1",
-      "name": "شركة الأمل للخدمات البيئية"
+      "name": "شركة الأمل للخدمات البيئية",
+      "contactName": "احمد",
+      "baladiAccountId": "DEMO-1001",
+      "legalName": "محمد يحي",
+      "commercialName": "الخندقاوي",
+      "phone": "0911223343",
+      "email": "hamotehc2@gmail.com",
+      "status": "active"
     },
     {
       "id": "2",
-      "name": "مؤسسة الواحة للمقاولات"
+      "name": "مؤسسة الواحة للمقاولات",
+      "contactName": "حسن",
+      "baladiAccountId": "DEMO-1002",
+      "legalName": "مؤسسة الواحة للمقاولات",
+      "commercialName": "مؤسسة الواحة للمقاولات",
+      "phone": "0911223232",
+      "email": "hassan@gmail.com",
+      "status": "active"
     },
     {
       "id": "3",
-      "name": "مقاول الخليج"
+      "name": "مقاول الخليج",
+      "contactName": "مسؤول تجريبي 3",
+      "baladiAccountId": "DEMO-1003"
     },
     {
       "id": "4",
-      "name": "مقاول النخيل"
+      "name": "مقاول النخيل",
+      "contactName": "مسؤول تجريبي 4",
+      "baladiAccountId": "DEMO-1004"
     }
   ],
   "projects": [

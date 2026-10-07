@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
@@ -14,6 +14,8 @@ const cardSubtitleCls = "mt-0.5 text-sm text-gray-500";
 const labelCls = "block text-sm font-medium text-gray-700 mb-1";
 const hintCls = "block text-xs text-gray-400 mt-1";
 const errorCls = "block text-xs text-red-600 mt-1";
+const primaryBtnCls = "w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-60 disabled:cursor-not-allowed";
+const cancelBtnCls = "w-full border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm text-center";
 
 export default function AddContractor() {
   const navigate = useNavigate();
@@ -29,12 +31,10 @@ export default function AddContractor() {
 
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
 
   // حفظ المقاول
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (saving) return;
 
     const data = {
       legalName: legalNameRef.current.value.trim(),
@@ -58,15 +58,7 @@ export default function AddContractor() {
 
     // الحفظ
     setSaving(true);
-    setSaveError("");
-
-    axios
-      .post(`${API_URL}/contractors`, data)
-      .then(() => navigate("/dashboard/contractors"))
-      .catch((err) => {
-        setSaveError(err.message || "تعذّر حفظ المقاول");
-        setSaving(false);
-      });
+    axios.post(`${API_URL}/contractors`, data).then(() => navigate("/dashboard/contractors"));
   };
 
   return (
@@ -169,23 +161,13 @@ export default function AddContractor() {
                 <h2 className={cardTitleCls}>حفظ المقاول</h2>
               </header>
               <div className="space-y-3 p-5">
-                {saveError && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{saveError}</div>}
-
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-sky-600 px-4 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:ring-offset-slate-900"
-                >
+                <button type="submit" disabled={saving} className={primaryBtnCls}>
                   {saving ? "جارٍ الحفظ..." : "حفظ المقاول"}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => navigate("/dashboard/contractors")}
-                  className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
-                >
+                <Link to="/dashboard/contractors" className={`${cancelBtnCls} block`}>
                   إلغاء
-                </button>
+                </Link>
               </div>
             </section>
           </div>

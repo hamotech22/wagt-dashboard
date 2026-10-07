@@ -1,3 +1,5 @@
+/* eslint-disable react-refresh/only-export-components */
+
 const STATUS = {
   inside: { label: "داخل الموقع", cls: "bg-blue-100 text-blue-700" },
   completed: { label: "مكتملة", cls: "bg-green-100 text-green-700" },
@@ -29,6 +31,23 @@ export function PlateBadge({ number, chars, size = "md" }) {
 }
 
 export const txCode = (id) => `TX-${String(id).padStart(6, "0")}`;
+
+export function getTransactionPlate(transaction, vehicles = []) {
+  const vehicle = vehicles.find((item) => String(item.id) === String(transaction.vehicleId));
+
+  return {
+    number: transaction.plateNumber ?? transaction.vehicle?.plateNumber ?? transaction.vehicle?.num ?? vehicle?.plateNumber,
+    chars: transaction.plateChars ?? transaction.vehicle?.plateChars ?? transaction.vehicle?.chars ?? vehicle?.plateChars,
+  };
+}
+
+export function getWasteWeight(transaction) {
+  if (transaction.wasteWeight != null) return Number(transaction.wasteWeight);
+  if (transaction.inWeight == null || transaction.outWeight == null) return null;
+
+  const netWeight = Number(transaction.inWeight) - Number(transaction.outWeight);
+  return Number.isFinite(netWeight) && netWeight >= 0 ? netWeight : null;
+}
 
 // الأوزان بالكيلوجرام → طن
 export const tons = (kg) => (kg == null ? "-" : (kg / 1000).toFixed(2));
