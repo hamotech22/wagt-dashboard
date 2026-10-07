@@ -5,13 +5,15 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
-const inputCls =
-  "h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
-const cardCls = "rounded-xl bg-white shadow-sm ring-1 ring-slate-200/70";
-const cardHeaderCls = "border-b border-slate-100 px-6 py-4";
-const labelCls = "mb-1.5 block text-sm font-medium text-slate-700";
-const hintCls = "mt-1 block text-xs text-slate-500";
-const errorCls = "mt-1 block text-xs text-red-600";
+// ---------- أشكال العناصر (نفس أشكال باقي الصفحات) ----------
+const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const cardCls = "bg-white rounded-xl shadow-sm";
+const cardHeaderCls = "border-b px-5 py-3";
+const cardTitleCls = "font-semibold text-gray-800";
+const cardSubtitleCls = "mt-0.5 text-sm text-gray-500";
+const labelCls = "block text-sm font-medium text-gray-700 mb-1";
+const hintCls = "block text-xs text-gray-400 mt-1";
+const errorCls = "block text-xs text-red-600 mt-1";
 
 export default function AddOrganization() {
   const navigate = useNavigate();
@@ -70,24 +72,29 @@ export default function AddOrganization() {
   };
 
   return (
-    <div className="p-6">
+    <div dir="rtl" className="p-6 space-y-5">
       <Breadcrumb>
         <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
         <Breadcrumb.Link to="/dashboard/organizations">الجهات والبلديات</Breadcrumb.Link>
         <Breadcrumb.Current>إضافة جهة</Breadcrumb.Current>
       </Breadcrumb>
-      <h1 className="text-xl font-bold text-slate-900">إضافة جهة</h1>
-      <p className="mt-1 text-sm text-slate-500">أدخل بيانات الجهة أو البلدية. الحقول المعلَّمة بـ * مطلوبة.</p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-6">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
+      {/* العنوان */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">إضافة جهة</h1>
+        <p className="text-sm text-gray-500">أدخل بيانات الجهة أو البلدية. الحقول المعلَّمة بـ * مطلوبة.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          {/* العمود الأيمن: بيانات الجهة */}
+          <div className="space-y-5 lg:col-span-2">
             {/* المعلومات الأساسية */}
             <section className={cardCls}>
               <header className={cardHeaderCls}>
-                <h2 className="font-semibold text-slate-900">المعلومات الأساسية</h2>
+                <h2 className={cardTitleCls}>المعلومات الأساسية</h2>
               </header>
-              <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                 <label className="block sm:col-span-2">
                   <span className={labelCls}>
                     اسم الجهة <span className="text-red-500">*</span>
@@ -119,10 +126,10 @@ export default function AddOrganization() {
             {/* معلومات التواصل */}
             <section className={cardCls}>
               <header className={cardHeaderCls}>
-                <h2 className="font-semibold text-slate-900">معلومات التواصل</h2>
-                <p className="mt-0.5 text-sm text-slate-500">بيانات التواصل الرسمية مع الجهة.</p>
+                <h2 className={cardTitleCls}>معلومات التواصل</h2>
+                <p className={cardSubtitleCls}>بيانات التواصل الرسمية مع الجهة.</p>
               </header>
-              <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                 <label className="block sm:col-span-2">
                   <span className={labelCls}>البريد الإلكتروني</span>
                   <input ref={emailRef} type="email" className={inputCls} dir="ltr" placeholder="example@email.com" />
@@ -145,10 +152,10 @@ export default function AddOrganization() {
             {/* الموقع */}
             <section className={cardCls}>
               <header className={cardHeaderCls}>
-                <h2 className="font-semibold text-slate-900">الموقع</h2>
-                <p className="mt-0.5 text-sm text-slate-500">موقع الجهة وعنوانها.</p>
+                <h2 className={cardTitleCls}>الموقع</h2>
+                <p className={cardSubtitleCls}>موقع الجهة وعنوانها.</p>
               </header>
-              <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                 <label className="block">
                   <span className={labelCls}>المدينة</span>
                   <input ref={cityRef} className={inputCls} placeholder="المدينة" />
@@ -161,19 +168,20 @@ export default function AddOrganization() {
 
                 <label className="block sm:col-span-2">
                   <span className={labelCls}>العنوان التفصيلي</span>
-                  <textarea ref={addressRef} rows={3} className={`${inputCls} h-auto py-2`} placeholder="اسم الحي، الشارع، رقم المبنى" />
+                  <textarea ref={addressRef} rows={3} className={inputCls} placeholder="اسم الحي، الشارع، رقم المبنى" />
                 </label>
               </div>
             </section>
           </div>
 
-          <div className="space-y-6">
+          {/* العمود الأيسر: الحالة والحفظ */}
+          <div className="space-y-5">
             {/* الحالة */}
             <section className={cardCls}>
               <header className={cardHeaderCls}>
-                <h2 className="font-semibold text-slate-900">الحالة</h2>
+                <h2 className={cardTitleCls}>الحالة</h2>
               </header>
-              <div className="p-6">
+              <div className="p-5">
                 <label className="block">
                   <span className={labelCls}>حالة الجهة</span>
                   <select ref={statusRef} defaultValue="active" className={inputCls}>
@@ -187,15 +195,15 @@ export default function AddOrganization() {
             {/* الحفظ */}
             <section className={cardCls}>
               <header className={cardHeaderCls}>
-                <h2 className="font-semibold text-slate-900">حفظ الجهة</h2>
+                <h2 className={cardTitleCls}>حفظ الجهة</h2>
               </header>
-              <div className="space-y-4 p-6">
+              <div className="space-y-3 p-5">
                 {saveError && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{saveError}</div>}
 
                 <button
                   type="submit"
                   disabled={saving}
-                  className="h-11 w-full rounded-lg bg-sky-600 px-4 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium"
                 >
                   {saving ? "جارٍ الحفظ..." : "حفظ الجهة"}
                 </button>
@@ -203,7 +211,7 @@ export default function AddOrganization() {
                 <button
                   type="button"
                   onClick={() => navigate("/dashboard/organizations")}
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-700 transition hover:bg-slate-50"
+                  className="w-full border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
                 >
                   إلغاء
                 </button>

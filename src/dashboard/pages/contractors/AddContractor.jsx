@@ -1,105 +1,196 @@
-import { useState } from "react";
+import axios from "axios";
+import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../components/common/Breadcrumb";
 
-const EMPTY = {
-  legalName: "",
-  commercialName: "",
-  contactName: "",
-  phone: "",
-  email: "",
-  baladiAccountId: "",
-  status: "active",
-};
+const API_URL = "http://localhost:3000";
 
-const input = "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700";
+// ---------- أشكال العناصر (نفس أشكال باقي الصفحات) ----------
+const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const cardCls = "bg-white rounded-xl shadow-sm";
+const cardHeaderCls = "border-b px-5 py-3";
+const cardTitleCls = "font-semibold text-gray-800";
+const cardSubtitleCls = "mt-0.5 text-sm text-gray-500";
+const labelCls = "block text-sm font-medium text-gray-700 mb-1";
+const hintCls = "block text-xs text-gray-400 mt-1";
+const errorCls = "block text-xs text-red-600 mt-1";
 
-export default function AddContractor({ onSave, onCancel }) {
-  const [form, setForm] = useState(EMPTY);
+export default function AddContractor() {
+  const navigate = useNavigate();
+
+  // ref لكل حقل في الفورم
+  const legalNameRef = useRef();
+  const commercialNameRef = useRef();
+  const baladiAccountIdRef = useRef();
+  const contactNameRef = useRef();
+  const phoneRef = useRef();
+  const emailRef = useRef();
+  const statusRef = useRef();
+
   const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
+  // حفظ المقاول
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (saving) return;
 
-  const submit = () => {
-    const err = {};
-    if (!form.legalName.trim()) err.legalName = "الاسم القانوني مطلوب";
-    if (!form.commercialName.trim()) err.commercialName = "الاسم التجاري مطلوب";
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) err.email = "البريد غير صحيح";
-    if (form.phone && !/^[0-9+\s-]{7,15}$/.test(form.phone)) err.phone = "رقم الجوال غير صحيح";
+    const data = {
+      legalName: legalNameRef.current.value.trim(),
+      commercialName: commercialNameRef.current.value.trim(),
+      baladiAccountId: baladiAccountIdRef.current.value,
+      contactName: contactNameRef.current.value,
+      phone: phoneRef.current.value,
+      email: emailRef.current.value,
+      status: statusRef.current.value,
+    };
 
-    setErrors(err);
-    if (Object.keys(err).length > 0) return;
+    // التحقق
+    const newErrors = {};
+    if (!data.legalName) newErrors.legalName = "الاسم القانوني مطلوب";
+    if (!data.commercialName) newErrors.commercialName = "الاسم التجاري مطلوب";
+    if (data.email && !/^\S+@\S+\.\S+$/.test(data.email)) newErrors.email = "البريد غير صحيح";
+    if (data.phone && !/^[0-9+\s-]{7,15}$/.test(data.phone)) newErrors.phone = "رقم الجوال غير صحيح";
 
-    // هنا تبعت البيانات للـ API لو حبيت:
-    // await fetch("/api/contractors", { method: "POST", body: JSON.stringify(form) })
-    onSave?.(form);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    // الحفظ
+    setSaving(true);
+    setSaveError("");
+
+    axios
+      .post(`${API_URL}/contractors`, data)
+      .then(() => navigate("/dashboard/contractors"))
+      .catch((err) => {
+        setSaveError(err.message || "تعذّر حفظ المقاول");
+        setSaving(false);
+      });
   };
 
   return (
-    <div dir="rtl" className="min-h-screen p-6 text-slate-900">
-      <div className="w-full">
-        <Breadcrumb>
-          <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
-          <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
-          <Breadcrumb.Current>إضافة مقاول</Breadcrumb.Current>
-        </Breadcrumb>
-        <h1 className="mb-6 text-2xl font-bold">إضافة مقاول</h1>
+    <div dir="rtl" className="p-6 space-y-5">
+      <Breadcrumb>
+        <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
+        <Breadcrumb.Link to="/dashboard/contractors">المقاولون</Breadcrumb.Link>
+        <Breadcrumb.Current>إضافة مقاول</Breadcrumb.Current>
+      </Breadcrumb>
 
-        <div className="space-y-5 rounded-lg border border-slate-200 bg-white p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm font-medium">
-              الاسم القانوني *
-              <input className={`${input} mt-1`} value={form.legalName} onChange={set("legalName")} />
-              {errors.legalName && <span className="text-xs text-red-600">{errors.legalName}</span>}
-            </label>
+      {/* العنوان */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">إضافة مقاول</h1>
+        <p className="text-sm text-gray-500">أدخل بيانات المقاول. الحقول المعلَّمة بـ * مطلوبة.</p>
+      </div>
 
-            <label className="block text-sm font-medium">
-              الاسم التجاري *
-              <input className={`${input} mt-1`} value={form.commercialName} onChange={set("commercialName")} />
-              {errors.commercialName && <span className="text-xs text-red-600">{errors.commercialName}</span>}
-            </label>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+          {/* العمود الأيمن: بيانات المقاول */}
+          <div className="space-y-5 lg:col-span-2">
+            {/* البيانات الأساسية */}
+            <section className={cardCls}>
+              <header className={cardHeaderCls}>
+                <h2 className={cardTitleCls}>البيانات الأساسية</h2>
+              </header>
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+                <label className="block">
+                  <span className={labelCls}>
+                    الاسم القانوني <span className="text-red-500">*</span>
+                  </span>
+                  <input ref={legalNameRef} className={inputCls} autoFocus />
+                  {errors.legalName && <span className={errorCls}>{errors.legalName}</span>}
+                </label>
 
-            <label className="block text-sm font-medium">
-              مسؤول التواصل
-              <input className={`${input} mt-1`} value={form.contactName} onChange={set("contactName")} />
-            </label>
+                <label className="block">
+                  <span className={labelCls}>
+                    الاسم التجاري <span className="text-red-500">*</span>
+                  </span>
+                  <input ref={commercialNameRef} className={inputCls} />
+                  {errors.commercialName && <span className={errorCls}>{errors.commercialName}</span>}
+                </label>
 
-            <label className="block text-sm font-medium">
-              الجوال
-              <input dir="ltr" className={`${input} mt-1`} value={form.phone} onChange={set("phone")} />
-              {errors.phone && <span className="text-xs text-red-600">{errors.phone}</span>}
-            </label>
+                <label className="block sm:col-span-2">
+                  <span className={labelCls}>رقم حساب بلدي</span>
+                  <input ref={baladiAccountIdRef} className={inputCls} dir="ltr" />
+                  <span className={hintCls}>اختياري</span>
+                </label>
+              </div>
+            </section>
 
-            <label className="block text-sm font-medium">
-              البريد الإلكتروني
-              <input dir="ltr" className={`${input} mt-1`} value={form.email} onChange={set("email")} />
-              {errors.email && <span className="text-xs text-red-600">{errors.email}</span>}
-            </label>
+            {/* معلومات التواصل */}
+            <section className={cardCls}>
+              <header className={cardHeaderCls}>
+                <h2 className={cardTitleCls}>معلومات التواصل</h2>
+                <p className={cardSubtitleCls}>بيانات التواصل مع المقاول.</p>
+              </header>
+              <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+                <label className="block sm:col-span-2">
+                  <span className={labelCls}>مسؤول التواصل</span>
+                  <input ref={contactNameRef} className={inputCls} />
+                </label>
 
-            <label className="block text-sm font-medium">
-              رقم حساب بلدي (اختياري)
-              <input dir="ltr" className={`${input} mt-1`} value={form.baladiAccountId} onChange={set("baladiAccountId")} />
-            </label>
+                <label className="block">
+                  <span className={labelCls}>الجوال</span>
+                  <input ref={phoneRef} className={inputCls} dir="ltr" />
+                  {errors.phone && <span className={errorCls}>{errors.phone}</span>}
+                </label>
 
-            <label className="block text-sm font-medium">
-              الحالة
-              <select className={`${input} mt-1`} value={form.status} onChange={set("status")}>
-                <option value="active">نشط</option>
-                <option value="inactive">غير نشط</option>
-                <option value="suspended">موقوف</option>
-              </select>
-            </label>
+                <label className="block">
+                  <span className={labelCls}>البريد الإلكتروني</span>
+                  <input ref={emailRef} className={inputCls} dir="ltr" />
+                  {errors.email && <span className={errorCls}>{errors.email}</span>}
+                </label>
+              </div>
+            </section>
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
-            <button onClick={onCancel} className="rounded-md border border-slate-300 px-4 py-2 text-sm">
-              إلغاء
-            </button>
-            <button onClick={submit} className="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
-              حفظ
-            </button>
+          {/* العمود الأيسر: الحالة والحفظ */}
+          <div className="space-y-5">
+            {/* الحالة */}
+            <section className={cardCls}>
+              <header className={cardHeaderCls}>
+                <h2 className={cardTitleCls}>الحالة</h2>
+              </header>
+              <div className="p-5">
+                <label className="block">
+                  <span className={labelCls}>حالة المقاول</span>
+                  <select ref={statusRef} defaultValue="active" className={inputCls}>
+                    <option value="active">نشط</option>
+                    <option value="inactive">غير نشط</option>
+                    <option value="suspended">موقوف</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+
+            {/* الحفظ */}
+            <section className={cardCls}>
+              <header className={cardHeaderCls}>
+                <h2 className={cardTitleCls}>حفظ المقاول</h2>
+              </header>
+              <div className="space-y-3 p-5">
+                {saveError && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{saveError}</div>}
+
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                >
+                  {saving ? "جارٍ الحفظ..." : "حفظ المقاول"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard/contractors")}
+                  className="w-full border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </section>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

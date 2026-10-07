@@ -5,30 +5,38 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
-const inputCls =
-  "h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100";
-const cardCls = "rounded-xl bg-white shadow-sm ring-1 ring-slate-200/70";
-const cardHeaderCls = "border-b border-slate-100 px-6 py-4";
-const labelCls = "mb-1.5 flex items-center gap-1 text-sm font-medium text-slate-700";
-const hintCls = "mt-1 block text-xs text-slate-500";
-const errorCls = "mt-1 block text-xs text-red-600";
+// ---------- أشكال العناصر (نفس أشكال باقي الصفحات) ----------
+const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+const cardCls = "bg-white rounded-xl shadow-sm";
+const cardHeaderCls = "border-b px-5 py-3";
+const cardTitleCls = "font-semibold text-gray-800";
+const cardSubtitleCls = "mt-0.5 text-sm text-gray-500";
+const labelCls = "block text-sm font-medium text-gray-700 mb-1";
+const hintCls = "block text-xs text-gray-400 mt-1";
+const errorCls = "block text-xs text-red-600 mt-1";
+
+// شكل زر المقاول (مختار / غير مختار)
+const contractorBtnCls = "flex w-full items-center justify-between rounded-lg border px-3 py-2 text-right text-sm";
+const selectedCls = "border-blue-200 bg-blue-50 text-blue-700";
+const unselectedCls = "border-gray-200 bg-white text-gray-700 hover:bg-gray-50";
 
 export default function AddProject() {
   const navigate = useNavigate();
 
-  // ref لكل حقل
+  // ref لكل حقل في الفورم
   const nameRef = useRef();
   const codeRef = useRef();
   const contractNumberRef = useRef();
   const statusRef = useRef();
+  const municipalityRef = useRef();
   const subMunicipalityRef = useRef();
   const startDateRef = useRef();
   const endDateRef = useRef();
   const notesRef = useRef();
 
-  // لازم state لأن الشاشة بتتغير مع قيمتهم
-  const [municipalityId, setMunicipalityId] = useState("");
-  const [contractorIds, setContractorIds] = useState([]);
+  // state فقط للحاجات اللي بتغيّر شكل الشاشة
+  const [municipalityId, setMunicipalityId] = useState(""); // لعرض الأحياء
+  const [contractorIds, setContractorIds] = useState([]); // المقاولين المختارين
 
   const [municipalities, setMunicipalities] = useState([]);
   const [contractors, setContractors] = useState([]);
@@ -60,7 +68,8 @@ export default function AddProject() {
     }
   };
 
-  const handleSubmit = async (event) => {
+  // حفظ المشروع
+  const handleSubmit = (event) => {
     event.preventDefault();
     if (saving) return;
 
@@ -69,7 +78,7 @@ export default function AddProject() {
       code: codeRef.current.value,
       contractNumber: contractNumberRef.current.value,
       status: statusRef.current.value,
-      municipalityId,
+      municipalityId: municipalityRef.current.value,
       subMunicipalityId: subMunicipalityRef.current.value,
       contractorIds,
       startDate: startDateRef.current.value,
@@ -93,41 +102,46 @@ export default function AddProject() {
     // الحفظ
     setSaving(true);
     setSaveError("");
-    try {
-      await axios.post(`${API_URL}/projects`, data);
-      navigate("/dashboard/projects");
-    } catch (err) {
-      setSaveError(err.message || "تعذّر حفظ المشروع");
-      setSaving(false);
-    }
+
+    axios
+      .post(`${API_URL}/projects`, data)
+      .then(() => navigate("/dashboard/projects"))
+      .catch((err) => {
+        setSaveError(err.message || "تعذّر حفظ المشروع");
+        setSaving(false);
+      });
   };
 
   return (
-    <div className="p-6">
+    <div dir="rtl" className="p-6 space-y-5">
       <Breadcrumb>
         <Breadcrumb.Link to="/dashboard">لوحة التحكم</Breadcrumb.Link>
         <Breadcrumb.Link to="/dashboard/projects">المشاريع</Breadcrumb.Link>
         <Breadcrumb.Current>إضافة مشروع</Breadcrumb.Current>
       </Breadcrumb>
 
-      <h1 className="text-xl font-bold text-slate-900">إضافة مشروع</h1>
-      <p className="mt-1 text-sm text-slate-500">أدخل بيانات المشروع واربطه بالبلدية والمقاولين. الحقول المعلَّمة بـ * مطلوبة.</p>
+      {/* العنوان */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">إضافة مشروع</h1>
+        <p className="text-sm text-gray-500">أدخل بيانات المشروع واربطه بالبلدية والمقاولين. الحقول المعلَّمة بـ * مطلوبة.</p>
+      </div>
 
       {loading ? (
-        <div className="mt-6 animate-pulse space-y-4" aria-busy="true" aria-label="جارٍ التحميل">
-          <div className="h-56 rounded-xl bg-slate-100" />
-          <div className="h-40 rounded-xl bg-slate-100" />
+        <div className="animate-pulse space-y-4" aria-busy="true" aria-label="جارٍ التحميل">
+          <div className="h-56 rounded-xl bg-gray-100" />
+          <div className="h-40 rounded-xl bg-gray-100" />
         </div>
       ) : (
-        <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-6">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+            {/* العمود الأيمن: بيانات المشروع */}
+            <div className="space-y-5 lg:col-span-2">
               {/* بيانات المشروع */}
               <section className={cardCls}>
                 <header className={cardHeaderCls}>
-                  <h2 className="font-semibold text-slate-900">بيانات المشروع</h2>
+                  <h2 className={cardTitleCls}>بيانات المشروع</h2>
                 </header>
-                <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                   <label className="block sm:col-span-2">
                     <span className={labelCls}>
                       اسم المشروع <span className="text-red-500">*</span>
@@ -162,15 +176,21 @@ export default function AddProject() {
               {/* النطاق الإداري */}
               <section className={cardCls}>
                 <header className={cardHeaderCls}>
-                  <h2 className="font-semibold text-slate-900">النطاق الإداري</h2>
-                  <p className="mt-0.5 text-sm text-slate-500">البلدية التي يتبع لها المشروع.</p>
+                  <h2 className={cardTitleCls}>النطاق الإداري</h2>
+                  <p className={cardSubtitleCls}>البلدية التي يتبع لها المشروع.</p>
                 </header>
-                <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                   <label className="block">
                     <span className={labelCls}>
                       البلدية <span className="text-red-500">*</span>
                     </span>
-                    <select className={inputCls} value={municipalityId} onChange={(e) => setMunicipalityId(e.target.value)}>
+                    {/* عند التغيير نحفظ القيمة في state لعرض الأحياء */}
+                    <select
+                      ref={municipalityRef}
+                      className={inputCls}
+                      defaultValue=""
+                      onChange={() => setMunicipalityId(municipalityRef.current.value)}
+                    >
                       <option value="">اختر البلدية</option>
                       {municipalities.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -199,10 +219,10 @@ export default function AddProject() {
               {/* معلومات التنفيذ */}
               <section className={cardCls}>
                 <header className={cardHeaderCls}>
-                  <h2 className="font-semibold text-slate-900">معلومات التنفيذ</h2>
-                  <p className="mt-0.5 text-sm text-slate-500">التواريخ والملحوظات الإضافية.</p>
+                  <h2 className={cardTitleCls}>معلومات التنفيذ</h2>
+                  <p className={cardSubtitleCls}>التواريخ والملحوظات الإضافية.</p>
                 </header>
-                <div className="grid grid-cols-1 gap-5 p-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
                   <label className="block">
                     <span className={labelCls}>تاريخ البداية</span>
                     <input ref={startDateRef} type="date" className={inputCls} />
@@ -222,33 +242,31 @@ export default function AddProject() {
               </section>
             </div>
 
-            <div className="space-y-6">
+            {/* العمود الأيسر: المقاولين والحفظ */}
+            <div className="space-y-5">
               {/* المقاولين */}
               <section className={cardCls}>
                 <header className={cardHeaderCls}>
-                  <h2 className="font-semibold text-slate-900">المقاولين</h2>
-                  <p className="mt-0.5 text-sm text-slate-500">اختر المقاولين المسند إليهم المشروع.</p>
+                  <h2 className={cardTitleCls}>المقاولين</h2>
+                  <p className={cardSubtitleCls}>اختر المقاولين المسند إليهم المشروع.</p>
                 </header>
-                <div className="space-y-3 p-6">
-                  {contractors.length === 0 && <p className="text-sm text-slate-500">لا توجد بيانات للمقاولين.</p>}
+                <div className="space-y-2 p-5">
+                  {contractors.length === 0 && <p className="text-sm text-gray-500">لا توجد بيانات للمقاولين.</p>}
 
                   {contractors.map((contractor) => {
                     const isSelected = contractorIds.includes(contractor.id);
+
                     return (
                       <button
                         key={contractor.id}
                         type="button"
                         onClick={() => toggleContractor(contractor.id)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-right text-sm transition ${
-                          isSelected
-                            ? "border-sky-200 bg-sky-50 text-sky-700"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                        }`}
+                        className={`${contractorBtnCls} ${isSelected ? selectedCls : unselectedCls}`}
                       >
                         <span>{contractor.name}</span>
                         <span
                           className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
-                            isSelected ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 text-transparent"
+                            isSelected ? "border-blue-600 bg-blue-600 text-white" : "border-gray-300 text-transparent"
                           }`}
                         >
                           ✓
@@ -264,15 +282,15 @@ export default function AddProject() {
               {/* الحفظ */}
               <section className={cardCls}>
                 <header className={cardHeaderCls}>
-                  <h2 className="font-semibold text-slate-900">حفظ المشروع</h2>
+                  <h2 className={cardTitleCls}>حفظ المشروع</h2>
                 </header>
-                <div className="space-y-4 p-6">
+                <div className="space-y-3 p-5">
                   {saveError && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{saveError}</div>}
 
                   <button
                     type="submit"
                     disabled={saving}
-                    className="h-11 w-full rounded-lg bg-sky-600 px-4 text-sm font-medium text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium"
                   >
                     {saving ? "جارٍ الحفظ..." : "حفظ المشروع"}
                   </button>
@@ -280,7 +298,7 @@ export default function AddProject() {
                   <button
                     type="button"
                     onClick={() => navigate("/dashboard/projects")}
-                    className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-700 transition hover:bg-slate-50"
+                    className="w-full border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"
                   >
                     إلغاء
                   </button>

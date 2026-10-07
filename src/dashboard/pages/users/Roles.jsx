@@ -6,22 +6,35 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 
 const API_URL = "http://localhost:3000";
 
+// ---------- دوال الاتصال بالسيرفر ----------
 const fetchRoles = () =>
   axios
     .get(`${API_URL}/roles`)
     .then((response) => response.data)
     .catch(() => []);
+
 const fetchUsers = () =>
   axios
     .get(`${API_URL}/users`)
     .then((response) => response.data)
     .catch(() => []);
+
 const createRole = (payload) => axios.post(`${API_URL}/roles`, { ...payload, id: Date.now() }).then((response) => response.data);
+
 const updateRole = (id, payload) => axios.put(`${API_URL}/roles/${id}`, { ...payload, id }).then((response) => response.data);
+
 const deleteRole = (id) => axios.delete(`${API_URL}/roles/${id}`).then((response) => response.data);
 
+// ---------- أشكال العناصر ----------
 const inputCls = "w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 
+// شكل أزرار الإجراءات (نفس شكل صفحة المركبات)
+const actionBtnCls = "rounded-md border px-2.5 py-1";
+const blueBtnCls = `${actionBtnCls} border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100`;
+const greenBtnCls = `${actionBtnCls} border-green-200 bg-green-50 text-green-700 hover:bg-green-100`;
+const redBtnCls = `${actionBtnCls} border-red-200 bg-red-50 text-red-700 hover:bg-red-100`;
+
+// ---------- نافذة إضافة / تعديل دور ----------
 function RoleModal({ role, onClose, onSave }) {
   const [nameAr, setNameAr] = useState(role?.nameAr || "");
   const [description, setDescription] = useState(role?.description || "");
@@ -31,6 +44,7 @@ function RoleModal({ role, onClose, onSave }) {
   const submit = async (e) => {
     e.preventDefault();
     if (!nameAr.trim()) return setError("اسم الدور مطلوب");
+
     setSaving(true);
     await onSave({ nameAr: nameAr.trim(), description: description.trim() });
     setSaving(false);
@@ -59,10 +73,12 @@ function RoleModal({ role, onClose, onSave }) {
           />
           {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">الوصف</label>
           <textarea rows={3} className={inputCls} value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
+
         {!role && <p className="text-xs text-gray-400">بعد الإضافة ستنتقل لصفحة الصلاحيات لتحديد ما يستطيع هذا الدور فعله.</p>}
 
         <div className="flex gap-3">
@@ -82,18 +98,21 @@ function RoleModal({ role, onClose, onSave }) {
   );
 }
 
+// ---------- الصفحة الرئيسية ----------
 export default function Roles() {
   const navigate = useNavigate();
+
   const [roles, setRoles] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modal, setModal] = useState(null); // null | "new" | role
+  const [modal, setModal] = useState(null); // null = مغلقة | "new" = دور جديد | role = تعديل دور
 
+  // جلب الأدوار والمستخدمين
   const load = async () => {
     setLoading(true);
-    const [r, u] = await Promise.all([fetchRoles(), fetchUsers()]);
-    setRoles(r);
-    setUsers(u);
+    const [rolesData, usersData] = await Promise.all([fetchRoles(), fetchUsers()]);
+    setRoles(rolesData);
+    setUsers(usersData);
     setLoading(false);
   };
 
@@ -101,21 +120,26 @@ export default function Roles() {
     load();
   }, []);
 
-  const usersCount = (id) => users.filter((u) => u.roleId === id).length;
+  // عدد المستخدمين في كل دور
+  const usersCount = (roleId) => users.filter((u) => u.roleId === roleId).length;
 
+  // حفظ دور (جديد أو تعديل)
   const handleSave = async (data) => {
     if (modal === "new") {
       const created = await createRole(data);
       navigate(`/dashboard/permissions?role=${created.id}`);
       return;
     }
+
     await updateRole(modal.id, data);
     setModal(null);
     load();
   };
 
+  // حذف دور
   const handleDelete = async (role) => {
     if (!window.confirm(`هل أنت متأكد من حذف دور "${role.nameAr}"؟`)) return;
+
     try {
       await deleteRole(role.id);
       load();
@@ -131,11 +155,14 @@ export default function Roles() {
         <Breadcrumb.Link to="/dashboard/users">المستخدمون والصلاحيات</Breadcrumb.Link>
         <Breadcrumb.Current>الأدوار</Breadcrumb.Current>
       </Breadcrumb>
+
+      {/* العنوان والأزرار العلوية */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">الأدوار</h1>
           <p className="text-sm text-gray-500">الأدوار قابلة للتكوين — كل دور يحمل مجموعة صلاحيات وظيفية</p>
         </div>
+
         <div className="flex gap-2">
           <Link to="/dashboard/users" className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50">
             المستخدمون
@@ -146,6 +173,7 @@ export default function Roles() {
         </div>
       </div>
 
+      {/* الجدول */}
       <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
         <table className="w-full text-sm text-right">
           <thead className="bg-gray-50 text-gray-600">
@@ -158,6 +186,7 @@ export default function Roles() {
               <th className="p-3">إجراءات</th>
             </tr>
           </thead>
+
           <tbody>
             {loading && (
               <tr>
@@ -166,6 +195,7 @@ export default function Roles() {
                 </td>
               </tr>
             )}
+
             {!loading && roles.length === 0 && (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-gray-400">
@@ -180,6 +210,8 @@ export default function Roles() {
                 <td className="p-3 text-xs text-gray-500 max-w-[280px]">{r.description || "-"}</td>
                 <td className="p-3">{usersCount(r.id)}</td>
                 <td className="p-3">{countPerms(r)}</td>
+
+                {/* نوع الدور: مبدئي أو مخصص */}
                 <td className="p-3">
                   <span
                     className={`px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -189,22 +221,27 @@ export default function Roles() {
                     {r.isSystem ? "مبدئي" : "مخصص"}
                   </span>
                 </td>
+
+                {/* الإجراءات */}
                 <td className="p-3">
-                  <div className="flex gap-3 text-xs">
-                    <Link to={`/dashboard/permissions?role=${r.id}`} className="text-blue-600 hover:underline">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Link to={`/dashboard/permissions?role=${r.id}`} className={blueBtnCls}>
                       الصلاحيات
                     </Link>
-                    {!r.locked && (
-                      <button onClick={() => setModal(r)} className="text-green-600 hover:underline">
-                        تعديل
-                      </button>
+
+                    {/* الأدوار المحمية لا يمكن تعديلها ولا حذفها */}
+                    {r.locked ? (
+                      <span className="text-gray-400">محمي</span>
+                    ) : (
+                      <>
+                        <button onClick={() => setModal(r)} className={greenBtnCls}>
+                          تعديل
+                        </button>
+                        <button onClick={() => handleDelete(r)} className={redBtnCls}>
+                          حذف
+                        </button>
+                      </>
                     )}
-                    {!r.locked && (
-                      <button onClick={() => handleDelete(r)} className="text-red-600 hover:underline">
-                        حذف
-                      </button>
-                    )}
-                    {r.locked && <span className="text-gray-400">محمي</span>}
                   </div>
                 </td>
               </tr>
@@ -213,6 +250,7 @@ export default function Roles() {
         </table>
       </div>
 
+      {/* نافذة الإضافة / التعديل */}
       {modal && <RoleModal role={modal === "new" ? null : modal} onClose={() => setModal(null)} onSave={handleSave} />}
     </div>
   );
