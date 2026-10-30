@@ -19,6 +19,7 @@ export default function Home() {
           <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" aria-hidden="true" />
         </Link>
         <p className="mt-5 text-xs text-slate-500">كل بياناتك التشغيلية في لوحة واحدة</p>
+        <p>hello world</p>
       </section>
     </main>
   );
